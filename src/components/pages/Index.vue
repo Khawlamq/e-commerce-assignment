@@ -41,7 +41,7 @@
               sm="6"
               md="3"
             >
-              <v-card class="product-card">
+              <v-card>
                 <v-img :src="product.image" height="180px" cover></v-img>
                 <v-card-text class="text-center">
                   <h4 class="text-subtitle-1 font-weight-medium mb-1">
@@ -132,16 +132,6 @@ const filteredProducts = computed(() => {
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
 }
 
-.product-card {
-  border: 1px solid #eee;
-  border-radius: 12px;
-  transition: box-shadow 0.2s;
-}
-
-.product-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
-}
-
 .prices {
   display: flex;
   flex-direction: column;
@@ -149,7 +139,9 @@ const filteredProducts = computed(() => {
 }
 
 .addToCartButton{
-   background-color: rgb(0 73 86 / var(--tw-bg-opacity, 1));
-   color: white;
+  background-color: rgb(0, 73, 86);
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
 }
 </style>
