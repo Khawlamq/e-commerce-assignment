@@ -4,8 +4,10 @@ import type  { User } from '../types/User';
 
 export const useUserStore = defineStore('user', {
   state: () => ({
+    token: '',
     user: null as User | null,
     message: '',
+
   }),
   actions: {
     async login(email : String, password: String) {
@@ -13,12 +15,14 @@ export const useUserStore = defineStore('user', {
         try {
             const response = await axios.post('https://limitless-lake-55070.herokuapp.com/user/signIn'
                 , { email, password });
-
-            console.log('Login successful:', response.data);
+          this.token = response.data.token;
+          this.user = response.data.user;
+          console.log('Login successful:', response.data);
         } catch (error) {
             this.message = 'فشل تسجيل الدخول!';
             console.error('Login error:', error);
         }
     }
-  }
+  },
+   persist: true,
 });

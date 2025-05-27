@@ -46,7 +46,6 @@ const password = ref('');
 const errorMessage= ref('');
 
 async function loginUser() {
-  this.errorMessage= ''
   await userStore.login(username.value, password.value);
   errorMessage.value = userStore.message;
 }
@@ -59,7 +58,7 @@ async function loginUser() {
   border-radius: 16px;
   padding: 2rem;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-  direction: rtl; /* Right-to-left layout */
+  direction: rtl; 
 }
 
 .login-button {
