@@ -3,8 +3,6 @@
     <v-row justify="center">
       <v-col cols="12" md="10">
         <div class="content-box">
-
-          <!-- Homepage Image -->
           <v-img
             :src="mainImage"
             aspect-ratio="16/7"
@@ -13,7 +11,7 @@
             alt="Homepage image"
           />
 
-          <!-- Filters -->
+          <!-- Filter and search -->
           <v-row class="mb-4">
             <v-col cols="5">
               <v-select
@@ -28,6 +26,7 @@
                 placeholder="ادخل اسم المنتج..."
                 variant="outlined"
                 hide-details
+                dir="rtl"
               />
             </v-col>
           </v-row>
@@ -35,29 +34,64 @@
           <!-- Products -->
           <v-row>
             <v-col
-              v-for="(product, index) in filteredProducts"
+              v-for="(product, index) in paginatedProducts"
               :key="index"
               cols="12"
               sm="6"
               md="3"
+              class="d-flex"
             >
-              <v-card>
-                <v-img :src="product.image" height="180px" cover></v-img>
-                <v-card-text class="text-center">
-                  <h4 class="text-subtitle-1 font-weight-medium mb-1">
-                    {{ product.brand }}
-                  </h4>
-                  <p class="text-body-2 mb-1">{{ product.name }}</p>
-                  <p class="text-caption text-grey-darken-1">{{ product.description }}</p>
-                  <div class="prices my-2">
-                    <del class="text-grey-lighten-1">{{ product.oldPrice }} SAR</del>
-                    <div class="text-h6 text-primary font-weight-bold">{{ product.price }} SAR</div>
+              <v-card class="d-flex flex-column justify-between h-100 w-100">
+                <v-img
+                  :src="product.imageURL"
+                  height="180px"
+                  cover
+                ></v-img>
+
+                <v-card-text
+                  class="text-center flex-grow-1 d-flex flex-column justify-space-between"
+                >
+                  <div>
+                    <h4 class="text-subtitle-1 font-weight-medium mb-1">
+                      {{ product.name }}
+                    </h4>
+                    <p class="text-body-2">{{ product.description }}</p>
                   </div>
-                  <v-btn class="addToCartButton" variant="flat" block>
-                    إضافة للسلة
-                  </v-btn>
+                  <div>
+                    <div class="prices my-2">
+                      <div class="text-h6 text-primary font-weight-bold">
+                        {{ product.price }} SAR
+                      </div>
+                    </div>
+                    <v-btn class="addToCartButton" variant="flat" block>
+                      إضافة للسلة
+                    </v-btn>
+                  </div>
                 </v-card-text>
               </v-card>
+            </v-col>
+          </v-row>
+
+          <!-- Pagination -->
+          <v-row justify="center">
+            <v-col cols="auto">
+              <v-btn
+                @click="currentPage = Math.max(currentPage - 1, 1)"
+                :disabled="currentPage === 1"
+              >
+                <ArrowLeftIcon class="icon" />
+              </v-btn>
+            </v-col>
+            <v-col cols="auto" style="display: flex; align-items: center">
+              <span>{{ currentPage }} / {{ totalPages }}</span>
+            </v-col>
+            <v-col cols="auto">
+              <v-btn
+                @click="currentPage = Math.min(currentPage + 1, totalPages)"
+                :disabled="currentPage === totalPages"
+              >
+                <ArrowRightIcon class="icon" />
+              </v-btn>
             </v-col>
           </v-row>
         </div>
@@ -67,55 +101,31 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import mainImage from '../../assets/images/main-slider/01.png'
-import airpodsOneImage from '../../assets/images/products/01.png'
-import airpodsSecondImage from '../../assets/images/products/02.png'
-import airpodsThirdImage from '../../assets/images/products/03.png'
-import airpodsForthImage from '../../assets/images/products/04.png'
+import { ref, computed, onMounted } from "vue";
+import { useProductStore } from "../../stores/productStore";
+import { ArrowRightIcon, ArrowLeftIcon } from "@heroicons/vue/24/outline";
+import mainImage from "../../assets/images/main-slider/01.png";
 
+const categories = ["الكل", "تصنيف1", "تصنيف2", "تصنيف3", "تصنيف4"];
+const selectedCategory = ref("الكل");
+const search = ref("");
+const productStore = useProductStore();
+const currentPage = ref(1);
+const itemsPerPage = 10;
 
-const categories = ['الكل', 'تصنيف1', 'تصنيف2', 'تصنيف3','تصنيف4']
-const selectedCategory = ref('الكل')
-const search = ref('')
+onMounted(() => {
+  productStore.fetchProducts();
+});
 
-const products = ref([
-    {
-    brand: 'apple',
-    name: 'سماعات AirPods Max الاصدار الجديد',
-    description: 'الاصدار الاحدث و الافضل حتى اليوم',
-    price: 2250,
-    oldPrice: 2500,
-    image: airpodsSecondImage,
-    category: 'سماعات'
-  },
-  {
-    brand: 'apple',
-    name: 'سماعات AirPods Max الاصدار الجديد',
-    description: 'الاصدار الاحدث و الافضل حتى اليوم',
-    price: 2250,
-    oldPrice: 2500,
-    image: airpodsThirdImage,
-    category: 'سماعات'
-  },
-  {
-    brand: 'apple',
-    name: 'سماعات AirPods Max الاصدار الجديد',
-    description: 'الاصدار الاحدث و الافضل حتى اليوم',
-    price: 2250,
-    oldPrice: 2500,
-    image: airpodsForthImage,
-    category: 'سماعات'
-  }
-])
+const totalPages = computed(() => {
+  return Math.ceil(productStore.products.length / itemsPerPage);
+});
 
-const filteredProducts = computed(() => {
-  return products.value.filter((product) => {
-    const matchesCategory = selectedCategory.value === 'الكل' || product.category === selectedCategory.value
-    const matchesSearch = product.name.includes(search.value) // Consider making this case-insensitive
-    return matchesCategory && matchesSearch
-  })
-})
+const paginatedProducts = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage;
+  return productStore.products.slice(start, start + itemsPerPage);
+});
+
 </script>
 
 <style scoped>
@@ -138,10 +148,14 @@ const filteredProducts = computed(() => {
   align-items: center;
 }
 
-.addToCartButton{
+.addToCartButton {
   background-color: rgb(0, 73, 86);
   color: white;
   border-radius: 8px;
   cursor: pointer;
+}
+.icon {
+  width: 20px;
+  height: 20px;
 }
 </style>
