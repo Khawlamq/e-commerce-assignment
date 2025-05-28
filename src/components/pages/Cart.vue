@@ -1,22 +1,30 @@
 <template>
   <v-container class="cart-page" fluid>
     <v-card class="content-box mx-auto">
-      <v-card-title class="text-h6 text-right">سلة المشتريات</v-card-title>
+      <v-card-title class="text-h6 text-right">  سلة المشتريات ({{ totalQuantity }})</v-card-title>
 
       <v-card-text>
         <v-alert
           v-if="cartStore.message"
-          :style="cartStore.message.includes('Added to cart') ||
-           cartStore.message.includes('Product has been updated') ||
-           cartStore.message.includes('Item has been removed') ? 
-                  { backgroundColor: 'rgb(186, 243, 230)', fontWeight: 'bold', color: 'black' } : 
-                  { backgroundColor: 'red', fontWeight: 'bold', color: 'white' }"
+          :style="
+            cartStore.message.includes('Added to cart') ||
+            cartStore.message.includes('Product has been updated') ||
+            cartStore.message.includes('Item has been removed')
+              ? {
+                  backgroundColor: 'rgb(186, 243, 230)',
+                  fontWeight: 'bold',
+                  color: 'black',
+                }
+              : { backgroundColor: 'red', fontWeight: 'bold', color: 'white' }
+          "
         >
-          {{ cartStore.message.includes('Added to cart') ||
-           cartStore.message.includes('Product has been updated') ||
-           cartStore.message.includes('Item has been removed') ? 
-             'تم تحديث عربة التسوق بنجاح' : 
-             'هناك مشكلة! لم يتم الاضافة الى عربة التسوق بنجاح' }}
+          {{
+            cartStore.message.includes("Added to cart") ||
+            cartStore.message.includes("Product has been updated") ||
+            cartStore.message.includes("Item has been removed")
+              ? "تم تحديث عربة التسوق بنجاح"
+              : "هناك مشكلة! لم يتم الاضافة الى عربة التسوق بنجاح"
+          }}
         </v-alert>
 
         <template v-if="cartStore.cartItems.length > 0">
@@ -31,7 +39,9 @@
                 <div class="text-right">
                   <div class="font-weight-medium">{{ item.product.name }}</div>
                   <div class="text-sm">
-                    <span class="text-grey">SAR {{ item.product.price.toLocaleString() }} × </span>
+                    <span class="text-grey"
+                      >SAR {{ item.product.price.toLocaleString() }} ×
+                    </span>
                     <span class="font-weight-bold">{{ item.quantity }}</span>
                   </div>
                 </div>
@@ -61,11 +71,17 @@
         </template>
 
         <template v-else>
+          <div v-if="isLoading" class="text-center py-10">
+            <v-progress-circular indeterminate color="green" size="50" />
+            <p class="mt-4">جاري تحميل المنتجات...</p>
+          </div>
+
           <v-alert
+            v-else
             type="info"
             variant="outlined"
             class="text-center font-weight-bold"
-            style="background-color: #fff3cd; color: #856404;"
+            style="background-color: #fff3cd; color: #856404"
           >
             سلة التسوق فارغة حالياً
           </v-alert>
@@ -80,46 +96,53 @@
           </span>
         </div>
       </v-card-text>
-      
-      <v-card-actions v-if="cartStore.cartItems.length > 0" class="justify-center">
-        <v-btn block class="checkout-button">
-          اتمام عملية الدفع
-        </v-btn>
+
+      <v-card-actions
+        v-if="cartStore.cartItems.length > 0"
+        class="justify-center"
+      >
+        <v-btn block class="checkout-button"> اتمام عملية الدفع </v-btn>
       </v-card-actions>
     </v-card>
   </v-container>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import { useCartStore } from '../../stores/cartStore'
-import { useUserStore } from '../../stores/userStore'
-import { MinusIcon, PlusIcon, TrashIcon } from '@heroicons/vue/24/outline'
+import { onMounted, ref, computed  } from "vue";
+import { useCartStore } from "../../stores/cartStore";
+import { useUserStore } from "../../stores/userStore";
+import { MinusIcon, PlusIcon, TrashIcon } from "@heroicons/vue/24/outline";
 
-const cartStore = useCartStore()
+const cartStore = useCartStore();
+const isLoading = ref(true); // for loading products from api call
 
-onMounted(() => {
-  const userStore = useUserStore()
+onMounted(async () => {
+  const userStore = useUserStore();
   if (userStore.token) {
-    cartStore.fetchCartItems()
+    isLoading.value = true;
+    await cartStore.fetchCartItems();
+    isLoading.value = false;
   }
-})
+});
+const totalQuantity = computed(() =>
+  cartStore.cartItems.reduce((total, item) => total + item.quantity, 0)
+);
 
 async function addCartItem(productId) {
-  await cartStore.addCartItem(productId)
+  await cartStore.addCartItem(productId);
 }
 
 async function deleteCartItem(itemId) {
-  await cartStore.deleteCartItem(itemId)
+  await cartStore.deleteCartItem(itemId);
 }
 
 async function incrementQuantity(item) {
-  await cartStore.updateCartItem(item.id, item.product.id, item.quantity + 1)
+  await cartStore.updateCartItem(item.id, item.product.id, item.quantity + 1);
 }
 
 async function decrementQuantity(item) {
   const newQuantity = Math.max(item.quantity - 1, 1);
-  await cartStore.updateCartItem(item.id, item.product.id, newQuantity)
+  await cartStore.updateCartItem(item.id, item.product.id, newQuantity);
 }
 </script>
 
@@ -129,7 +152,7 @@ async function decrementQuantity(item) {
   min-height: 100vh;
   padding-top: 2rem;
   direction: rtl;
-  font-family: 'Tajawal', sans-serif;
+  font-family: "Tajawal", sans-serif;
 }
 
 .content-box {

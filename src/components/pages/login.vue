@@ -1,35 +1,42 @@
 <template>
   <v-container>
     <v-card class="content-box">
-      <v-card-title class="text-h6 text-right">
-        تسجيل الدخول
-      </v-card-title>
+      <v-card-title class="text-h6 text-right"> تسجيل الدخول </v-card-title>
       <v-card-text>
-        <v-form @submit.prevent="loginUser"> 
+        <v-alert
+          v-if="userStore.message"
+          class="my-4"
+          :style="
+            userStore.message.includes('تسجيل الدخول بنجاح!')
+              ? {
+                  backgroundColor: 'rgb(186, 243, 230)',
+                  fontWeight: 'bold',
+                  color: 'black',
+                }
+              : { backgroundColor: 'red', fontWeight: 'bold', color: 'white' }
+          "
+        >
+          {{ userStore.message }}
+        </v-alert>
+        <v-form @submit.prevent="loginUser">
           <v-text-field
             label=" الايميل"
-            v-model="username" 
+            v-model="username"
             required
             dir="rtl"
             class="text-right"
+            :rules="[emailRule]"
           />
           <v-text-field
             label="كلمة المرور"
-            v-model="password" 
+            v-model="password"
             type="password"
             required
             dir="rtl"
             class="text-right"
           />
-          <v-btn class="login-button" type="submit"> 
-            دخول
-          </v-btn>
-          <v-btn class="forgot-password" text>
-            نسيت كلمة المرور؟
-          </v-btn>
-          <v-alert v-if="errorMessage" type="error" dismissible>
-            {{ errorMessage }} 
-          </v-alert>
+          <v-btn class="login-button" type="submit"> دخول </v-btn>
+          <v-btn class="forgot-password" text> نسيت كلمة المرور؟ </v-btn>
         </v-form>
       </v-card-text>
     </v-card>
@@ -37,19 +44,29 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useUserStore } from '../../stores/userStore';
+import { ref, watch } from "vue";
+import { useRouter } from "vue-router";
+import { useUserStore } from "../../stores/userStore";
 
 const userStore = useUserStore();
-const username = ref('');
-const password = ref('');
-const errorMessage= ref('');
+const router = useRouter();
+
+const username = ref("");
+const password = ref("");
+
+const emailRule = (v: string) =>
+  (!!v && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) ||
+  "الرجاء إدخال بريد إلكتروني بشكل صحيح!";
 
 async function loginUser() {
   await userStore.login(username.value, password.value);
-  errorMessage.value = userStore.message;
-}
 
+  if (userStore.message.includes("تسجيل الدخول بنجاح")) {
+    setTimeout(() => {
+      router.push("/");
+    }, 2000);  // redirect to home page after show success message
+  }
+}
 </script>
 
 <style scoped>
@@ -58,7 +75,7 @@ async function loginUser() {
   border-radius: 16px;
   padding: 2rem;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-  direction: rtl; 
+  direction: rtl;
 }
 
 .login-button {
