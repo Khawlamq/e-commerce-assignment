@@ -48,7 +48,7 @@
               </v-col>
               <v-col cols="12" sm="6" class="cart-controls">
                 <div class="quantity-selector">
-                  <v-btn icon @click="decrementQuantity(item)">
+                  <v-btn icon @click="decrementQuantity(item)" :disabled="item.quantity <= 1">
                     <MinusIcon class="icon" />
                   </v-btn>
                   <span class="quantity-number">{{ item.quantity }}</span>

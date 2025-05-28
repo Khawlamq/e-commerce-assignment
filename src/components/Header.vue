@@ -19,8 +19,11 @@
 
       <!-- Icons -->
       <div class="header-actions">
-        <router-link to="/cart" class="icon-button" title="السلة">
+        <router-link to="/cart" class="icon-button cart-icon" title="السلة">
           <ShoppingBagIcon class="icon" />
+          <span v-if="totalQuantity > 0" class="badge">{{
+            totalQuantity
+          }}</span>
         </router-link>
         <router-link to="/login" class="icon-button" title="تسجيل الدخول">
           <UserIcon class="icon" />
@@ -31,7 +34,18 @@
 </template>
 
 <script setup lang="ts">
-import { ShoppingBagIcon, UserMinusIcon, UserIcon } from "@heroicons/vue/24/outline";
+import {
+  ShoppingBagIcon,
+  UserMinusIcon,
+  UserIcon,
+} from "@heroicons/vue/24/outline";
+import { computed } from "vue";
+import { useCartStore } from "../stores/cartStore";
+
+const cartStore = useCartStore();
+const totalQuantity = computed(() =>
+  cartStore.cartItems.reduce((total, item) => total + item.quantity, 0)
+);
 </script>
 
 <style scoped>
@@ -113,5 +127,15 @@ import { ShoppingBagIcon, UserMinusIcon, UserIcon } from "@heroicons/vue/24/outl
     text-align: right;
     gap: 1rem;
   }
+}
+
+.badge {
+  background-color: red;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: bold;
+  border-radius: 50%;
+  padding: 2px 6px;
+  line-height: 1;
 }
 </style>
