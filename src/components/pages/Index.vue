@@ -11,16 +11,19 @@
             alt="Homepage image"
           />
 
-          <!-- Filter and search -->
+          <!-- Search and filter -->
           <v-row class="mb-4">
-            <v-col cols="5">
+            <v-col cols="4">
               <v-select
-                :items="categories"
-                v-model="selectedCategory"
+                :items="priceOptions"
+                v-model="selectedPriceSort"
+                label="فرز حسب السعر"
+                item-title="title"
+                item-value="value"
                 variant="outlined"
               />
             </v-col>
-            <v-col cols="7">
+            <v-col cols="8">
               <v-text-field
                 v-model="search"
                 placeholder="ادخل اسم المنتج..."
@@ -31,10 +34,16 @@
             </v-col>
           </v-row>
 
+          <!-- Loading spinner -->
+          <div v-if="isLoading" class="text-center py-10">
+            <v-progress-circular indeterminate color="green" size="50" />
+            <p class="mt-4">جاري تحميل المنتجات...</p>
+          </div>
+
           <!-- Products -->
           <v-row>
             <v-col
-              v-for="(product, index) in paginatedProducts"
+              v-for="(product, index) in products"
               :key="index"
               cols="12"
               sm="6"
@@ -42,12 +51,7 @@
               class="d-flex"
             >
               <v-card class="d-flex flex-column justify-between h-100 w-100">
-                <v-img
-                  :src="product.imageURL"
-                  height="180px"
-                  cover
-                ></v-img>
-
+                <v-img :src="product.imageURL" height="180px" cover></v-img>
                 <v-card-text
                   class="text-center flex-grow-1 d-flex flex-column justify-space-between"
                 >
@@ -72,26 +76,10 @@
             </v-col>
           </v-row>
 
-          <!-- Pagination -->
-          <v-row justify="center">
-            <v-col cols="auto">
-              <v-btn
-                @click="currentPage = Math.max(currentPage - 1, 1)"
-                :disabled="currentPage === 1"
-              >
-                <ArrowLeftIcon class="icon" />
-              </v-btn>
-            </v-col>
-            <v-col cols="auto" style="display: flex; align-items: center">
-              <span>{{ currentPage }} / {{ totalPages }}</span>
-            </v-col>
-            <v-col cols="auto">
-              <v-btn
-                @click="currentPage = Math.min(currentPage + 1, totalPages)"
-                :disabled="currentPage === totalPages"
-              >
-                <ArrowRightIcon class="icon" />
-              </v-btn>
+          <!-- No products found -->
+          <v-row v-if="!loading && products.length === 0">
+            <v-col cols="12" class="text-center text-grey">
+              لا توجد منتجات مطابقة
             </v-col>
           </v-row>
         </div>
@@ -101,31 +89,82 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { useProductStore } from "../../stores/productStore";
-import { ArrowRightIcon, ArrowLeftIcon } from "@heroicons/vue/24/outline";
 import mainImage from "../../assets/images/main-slider/01.png";
 
-const categories = ["الكل", "تصنيف1", "تصنيف2", "تصنيف3", "تصنيف4"];
-const selectedCategory = ref("الكل");
-const search = ref("");
 const productStore = useProductStore();
-const currentPage = ref(1);
+const search = ref("");
+const selectedPriceSort = ref("lowToHigh");
+const priceOptions = [
+  { title: "السعر من الأعلى إلى الأقل", value: "highToLow" },
+  { title: "السعر من الأقل إلى الأعلى", value: "lowToHigh" },
+];
 const itemsPerPage = 10;
+const page = ref(1);
+const products = ref<any[]>([]);
+const loading = ref(false); // for scroll
+const isLoading = ref(true); // for loading products from api call
 
-onMounted(() => {
-  productStore.fetchProducts();
+// Computed filtered and sorted products
+const sortedProducts = computed(() => {
+  const keyword = search.value.toLowerCase().trim();
+
+  let filtered = productStore.products.filter((p) =>
+    p.name?.toLowerCase().includes(keyword)
+  );
+
+  if (selectedPriceSort.value === "highToLow") {
+    filtered.sort((a, b) => b.price - a.price);
+  } else {
+    filtered.sort((a, b) => a.price - b.price);
+  }
+  return filtered;
 });
 
-const totalPages = computed(() => {
-  return Math.ceil(productStore.products.length / itemsPerPage);
+// Load products for infinite scroll
+function loadMore() {
+  if (loading.value) return; // is empty
+  const start = (page.value - 1) * itemsPerPage;
+  const nextProducts = sortedProducts.value.slice(start, start + itemsPerPage);
+  
+  if (nextProducts.length === 0) return;
+  loading.value = true;
+
+  setTimeout(() => {
+    products.value.push(...nextProducts);
+    page.value++;
+    loading.value = false;
+  }, 200);
+}
+
+// Infinite scroll
+function onScroll() {
+  if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+    loadMore();
+  }
+}
+
+onMounted(async () => {
+   isLoading.value = true;
+  await productStore.fetchProducts();
+  products.value = [];
+  page.value = 1;
+  loadMore();
+  window.addEventListener("scroll", onScroll);
+   isLoading.value = false;
 });
 
-const paginatedProducts = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage;
-  return productStore.products.slice(start, start + itemsPerPage);
+onUnmounted(() => {
+  window.removeEventListener("scroll", onScroll);
 });
 
+// Watch search and sort and reload filtered products
+watch([search, selectedPriceSort], () => {
+  page.value = 1;
+  products.value = [];
+  loadMore();
+});
 </script>
 
 <style scoped>
@@ -153,9 +192,5 @@ const paginatedProducts = computed(() => {
   color: white;
   border-radius: 8px;
   cursor: pointer;
-}
-.icon {
-  width: 20px;
-  height: 20px;
 }
 </style>
