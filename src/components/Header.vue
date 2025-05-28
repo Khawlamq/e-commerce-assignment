@@ -4,10 +4,12 @@
       <!-- Logo + Brand -->
       <div class="header-brand">
         <div class="logo-circle">
-          <img
-            src="https://cdn.salla.network/images/logo/logo-square.png"
-            alt="شعار المتجر"
-          />
+          <router-link to="/" title="تسجيل الدخول">
+            <img
+              src="https://cdn.salla.network/images/logo/logo-square.png"
+              alt="شعار المتجر"
+            />
+          </router-link>
         </div>
         <div class="brand-text">
           <h1>متجر التجربة الجميلة</h1>
@@ -17,20 +19,19 @@
 
       <!-- Icons -->
       <div class="header-actions">
-        <button class="icon-button">
+        <router-link to="/cart" class="icon-button" title="السلة">
           <ShoppingBagIcon class="icon" />
-        </button>
-        <button class="icon-button">
+        </router-link>
+        <router-link to="/login" class="icon-button" title="تسجيل الدخول">
           <UserIcon class="icon" />
-        </button>
+        </router-link>
       </div>
     </div>
   </header>
 </template>
 
-
 <script setup lang="ts">
-import { ShoppingBagIcon, UserIcon } from '@heroicons/vue/24/outline' 
+import { ShoppingBagIcon, UserMinusIcon, UserIcon } from "@heroicons/vue/24/outline";
 </script>
 
 <style scoped>

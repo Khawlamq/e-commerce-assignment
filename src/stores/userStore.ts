@@ -1,28 +1,36 @@
-import { defineStore } from 'pinia';
-import axios from 'axios';
-import type  { User } from '../types/user';
+import { defineStore } from "pinia";
+import axios from "axios";
+import type { User } from "../types/user";
 
-export const useUserStore = defineStore('user', {
+export const useUserStore = defineStore("user", {
   state: () => ({
-    token: '',
+    token: "",
     user: null as User | null,
-    message: '',
-
+    message: "",
   }),
   actions: {
-    async login(email : String, password: String) {
-      this.message = ''; 
-        try {
-            const response = await axios.post('https://limitless-lake-55070.herokuapp.com/user/signIn'
-                , { email, password });
-          this.token = response.data.token;
-          this.user = response.data.user;
-          console.log('Login successful:', response.data);
-        } catch (error) {
-            this.message = 'فشل تسجيل الدخول!';
-            console.error('Login error:', error);
-        }
-    }
+    async login(email: String, password: String) {
+      this.message = "";
+      try {
+        const response = await axios.post(
+          "https://limitless-lake-55070.herokuapp.com/user/signIn",
+          { email, password }
+        );
+        this.token = response.data.token;
+        this.user = response.data.user;
+        console.log("Login successful:", response.data);
+        this.setTimeForMsg((this.message = " تسجيل الدخول بنجاح!"), 4000);
+      } catch (error) {
+        this.setTimeForMsg((this.message = "فشل تسجيل الدخول!"), 7000);
+        console.error("Login error:", error);
+      }
+    },
+    async setTimeForMsg(message: string, duration: number) {
+      this.message = message;
+      setTimeout(() => { // remove message alert after duration
+        this.message = "";
+      }, duration);
+    },
   },
-   persist: true,
+  persist: true,
 });
