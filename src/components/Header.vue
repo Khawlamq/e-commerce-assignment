@@ -39,10 +39,19 @@ import {
   UserMinusIcon,
   UserIcon,
 } from "@heroicons/vue/24/outline";
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import { useCartStore } from "../stores/cartStore";
+import { useUserStore } from "../stores/userStore";
 
 const cartStore = useCartStore();
+const userStore = useUserStore();
+
+onMounted(() => {
+  if (userStore.token) {
+    cartStore.fetchCartItems();
+  }
+});
+
 const totalQuantity = computed(() =>
   cartStore.cartItems.reduce((total, item) => total + item.quantity, 0)
 );
