@@ -50,34 +50,44 @@
               md="3"
               class="d-flex"
             >
-              <v-card class="d-flex flex-column justify-between h-100 w-100">
-                <v-img :src="product.imageURL" height="180px" cover></v-img>
-                <v-card-text
-                  class="text-center flex-grow-1 d-flex flex-column justify-space-between"
-                >
-                  <div>
-                    <h4 class="text-subtitle-1 font-weight-medium mb-1">
-                      {{ product.name }}
-                    </h4>
-                    <p class="text-body-2">{{ product.description }}</p>
-                  </div>
-                  <div>
-                    <div class="prices my-2">
-                      <div class="text-h6 text-primary font-weight-bold">
-                        {{ product.price }} SAR
-                      </div>
+              <router-link
+                :to="{ name: 'ProductDetails', params: { id: product.id } }"
+                class="d-flex flex-column justify-between h-100 w-100 text-decoration-none"
+              >
+                <v-card class="d-flex flex-column justify-between h-100 w-100">
+                  <v-img :src="product.imageURL" height="180px" cover></v-img>
+                  <v-card-text
+                    class="text-center flex-grow-1 d-flex flex-column justify-space-between"
+                  >
+                    <div>
+                      <h4 class="text-subtitle-1 font-weight-medium mb-1">
+                        {{ product.name }}
+                      </h4>
+                      <p class="text-body-2">{{ product.description }}</p>
                     </div>
-                    <v-btn class="addToCartButton" variant="flat" block>
-                      إضافة للسلة
-                    </v-btn>
-                  </div>
-                </v-card-text>
-              </v-card>
+                    <div>
+                      <div class="prices my-2">
+                        <div class="text-h6 text-primary font-weight-bold">
+                          {{ product.price }} SAR
+                        </div>
+                      </div>
+                      <v-btn
+                        class="addToCartButton"
+                        variant="flat"
+                        block
+                        @click="addToCart(product.id)"
+                      >
+                        إضافة للسلة
+                      </v-btn>
+                    </div>
+                  </v-card-text>
+                </v-card>
+              </router-link>
             </v-col>
           </v-row>
 
           <!-- No products found -->
-          <v-row v-if="!loading && products.length === 0">
+           <v-row v-if="!isLoading && products.length === 0  && search.trim().length > 0">
             <v-col cols="12" class="text-center text-grey">
               لا توجد منتجات مطابقة
             </v-col>
@@ -91,9 +101,13 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { useProductStore } from "../../stores/productStore";
+import { useCartStore } from "../../stores/cartStore";
 import mainImage from "../../assets/images/main-slider/01.png";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const productStore = useProductStore();
+const cartStore = useCartStore();
 const search = ref("");
 const selectedPriceSort = ref("lowToHigh");
 const priceOptions = [
@@ -104,7 +118,7 @@ const itemsPerPage = 10;
 const page = ref(1);
 const products = ref<any[]>([]);
 const loading = ref(false); // for scroll
-const isLoading = ref(true); // for loading products from api call
+const isLoading = ref(false); // for loading products from api call
 
 // Computed filtered and sorted products
 const sortedProducts = computed(() => {
@@ -127,7 +141,7 @@ function loadMore() {
   if (loading.value) return; // is empty
   const start = (page.value - 1) * itemsPerPage;
   const nextProducts = sortedProducts.value.slice(start, start + itemsPerPage);
-  
+
   if (nextProducts.length === 0) return;
   loading.value = true;
 
@@ -145,14 +159,19 @@ function onScroll() {
   }
 }
 
+async function addToCart(productId) {
+  await cartStore.addCartItem(productId);
+  router.push('/cart')
+}
+
 onMounted(async () => {
-   isLoading.value = true;
+  isLoading.value = true;
   await productStore.fetchProducts();
   products.value = [];
   page.value = 1;
   loadMore();
   window.addEventListener("scroll", onScroll);
-   isLoading.value = false;
+  isLoading.value = false;
 });
 
 onUnmounted(() => {

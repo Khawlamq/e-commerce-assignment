@@ -1,15 +1,19 @@
 <template>
   <v-container class="cart-page" fluid>
     <v-card class="content-box mx-auto">
-      <v-card-title class="text-h6 text-right">  سلة المشتريات ({{ totalQuantity }})</v-card-title>
+      <v-card-title class="text-h6 text-right">
+        سلة المشتريات ({{ totalQuantity }})</v-card-title
+      >
 
       <v-card-text>
         <v-alert
           v-if="cartStore.message"
           :style="
-            cartStore.message.includes('Added to cart') ||
-            cartStore.message.includes('Product has been updated') ||
-            cartStore.message.includes('Item has been removed')
+            cartStore.message.includes(
+              'تم اضافة المنتج الى عربة التسوق بنجاح'
+            ) ||
+            cartStore.message.includes('تم حذف المنتج من عربة التسوق بنجاح') ||
+            cartStore.message.includes('تم تحديث عربة التسوق بنجاح')
               ? {
                   backgroundColor: 'rgb(186, 243, 230)',
                   fontWeight: 'bold',
@@ -18,13 +22,7 @@
               : { backgroundColor: 'red', fontWeight: 'bold', color: 'white' }
           "
         >
-          {{
-            cartStore.message.includes("Added to cart") ||
-            cartStore.message.includes("Product has been updated") ||
-            cartStore.message.includes("Item has been removed")
-              ? "تم تحديث عربة التسوق بنجاح"
-              : "هناك مشكلة! لم يتم الاضافة الى عربة التسوق بنجاح"
-          }}
+          {{ cartStore.message }}
         </v-alert>
 
         <template v-if="cartStore.cartItems.length > 0">
@@ -33,40 +31,55 @@
             :key="item.id"
             class="cart-item"
           >
-            <v-row class="cart-row" justify="space-between" no-gutters>
-              <v-col cols="12" sm="6" class="d-flex align-center cart-info">
-                <v-img :src="item.product.imageURL" class="cart-image" cover />
-                <div class="text-right">
-                  <div class="font-weight-medium">{{ item.product.name }}</div>
-                  <div class="text-sm">
-                    <span class="text-grey"
-                      >SAR {{ item.product.price.toLocaleString() }} ×
-                    </span>
-                    <span class="font-weight-bold">{{ item.quantity }}</span>
+            <router-link
+              :to="{ name: 'ProductDetails', params: { id: item.product.id } }"
+              class="d-flex flex-column justify-between h-100 w-100 text-decoration-none"
+            >
+              <v-row class="cart-row" justify="space-between" no-gutters>
+                <v-col cols="12" sm="6" class="d-flex align-center cart-info">
+                  <v-img
+                    :src="item.product.imageURL"
+                    class="cart-image"
+                    cover
+                  />
+                  <div class="text-right">
+                    <div class="font-weight-medium">
+                      {{ item.product.name }}
+                    </div>
+                    <div class="text-sm">
+                      <span class="text-grey"
+                        >SAR {{ item.product.price.toLocaleString() }} ×
+                      </span>
+                      <span class="font-weight-bold">{{ item.quantity }}</span>
+                    </div>
                   </div>
-                </div>
-              </v-col>
-              <v-col cols="12" sm="6" class="cart-controls">
-                <div class="quantity-selector">
-                  <v-btn icon @click="decrementQuantity(item)" :disabled="item.quantity <= 1">
-                    <MinusIcon class="icon" />
+                </v-col>
+                <v-col cols="12" sm="6" class="cart-controls">
+                  <div class="quantity-selector">
+                    <v-btn
+                      icon
+                      @click="decrementQuantity(item)"
+                      :disabled="item.quantity <= 1"
+                    >
+                      <MinusIcon class="icon" />
+                    </v-btn>
+                    <span class="quantity-number">{{ item.quantity }}</span>
+                    <v-btn icon @click="incrementQuantity(item)">
+                      <PlusIcon class="icon" />
+                    </v-btn>
+                  </div>
+                  <v-btn
+                    icon
+                    color="error"
+                    variant="outlined"
+                    @click="deleteCartItem(item.id)"
+                  >
+                    <TrashIcon class="icon" />
                   </v-btn>
-                  <span class="quantity-number">{{ item.quantity }}</span>
-                  <v-btn icon @click="incrementQuantity(item)">
-                    <PlusIcon class="icon" />
-                  </v-btn>
-                </div>
-                <v-btn
-                  icon
-                  color="error"
-                  variant="outlined"
-                  @click="deleteCartItem(item.id)"
-                >
-                  <TrashIcon class="icon" />
-                </v-btn>
-              </v-col>
-            </v-row>
-            <v-divider class="my-4" />
+                </v-col>
+              </v-row>
+              <v-divider class="my-4"
+            /></router-link>
           </div>
         </template>
 
@@ -108,7 +121,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed  } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { useCartStore } from "../../stores/cartStore";
 import { useUserStore } from "../../stores/userStore";
 import { MinusIcon, PlusIcon, TrashIcon } from "@heroicons/vue/24/outline";
@@ -127,10 +140,6 @@ onMounted(async () => {
 const totalQuantity = computed(() =>
   cartStore.cartItems.reduce((total, item) => total + item.quantity, 0)
 );
-
-async function addCartItem(productId) {
-  await cartStore.addCartItem(productId);
-}
 
 async function deleteCartItem(itemId) {
   await cartStore.deleteCartItem(itemId);

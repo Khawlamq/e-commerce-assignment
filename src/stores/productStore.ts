@@ -13,9 +13,9 @@ export const useProductStore = defineStore('product', {
       try {
         const response = await axios.get('https://limitless-lake-55070.herokuapp.com/product/');
         this.products = response.data;
-        this.setTimeForMsg(response.data.message, 7000)
+        this.setTimeForMsg((this.message="تم اضافة المنتج الى عربة التسوق بنجاح"), 7000)
       } catch (error) {
-        console.error('Error fetching products:', error);
+        this.setTimeForMsg((this.message="حدثت مشكلة! الرجاء المحاولة مرة اخرى"), 7000)
       }
     },
      async setTimeForMsg(message: string, duration: number){
