@@ -125,6 +125,23 @@ const totalQuantity = computed(() =>
   color: black;
 }
 
+@media (min-width: 1200px) {
+  .icon {
+  width: 30px;
+  height: 40px;
+  color: black;
+}
+.icon-button {
+  background-color: #c7f3ec !important;
+  border-radius: 50% !important;
+  width: 60px;
+  height: 60px;
+  border: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+}
 @media (min-width: 700px) {
   .header-content {
     flex-direction: row-reverse;

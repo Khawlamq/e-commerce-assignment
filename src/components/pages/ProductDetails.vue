@@ -17,23 +17,21 @@
         {{ cartStore.message }}
       </v-alert>
       <v-row>
-        <v-col cols="12" sm="6" order-md="2">
+        <v-col cols="12" sm="6" class="d-flex justify-center" >
           <v-img :src="product.imageURL" class="product-image" />
         </v-col>
-        <v-col cols="12" sm="6" order-md="1">
+        <v-col cols="12" sm="6">
           <v-card-title class="text-wrap">
             {{ product.name }}
           </v-card-title>
-          <v-card-subtitle class="product-price">
-            <div class="text-h6 font-weight-bold px-3">
+          <v-card-subtitle >
+            <div class="font-weight-bold product-price">
               {{ product.price }} SAR
             </div>
-            <del class="text-grey-lighten-1">{{ product.oldPrice }} SAR</del>
           </v-card-subtitle>
           <v-card-text>
             <p>{{ product.description }}</p>
           </v-card-text>
-
           <div class="actions-container">
             <div class="quantity-selector">
               <v-btn
@@ -150,6 +148,7 @@ async function addToCart(product) {
   margin-right: 10px;
   width: 120px;
 }
+
 @media (max-width: 700px) {
   .addToCartButton {
     width: 170px;
@@ -165,11 +164,13 @@ async function addToCart(product) {
 .product-image {
   border-radius: 12px;
   width: 100%;
+  height:400px
 }
 
 .product-price {
   display: flex;
   align-items: center;
+  font-size: 20px;
 }
 
 .actions-container {
@@ -199,5 +200,47 @@ async function addToCart(product) {
 .icon {
   width: 20px;
   height: 20px;
+}
+
+@media (min-width: 1200px) {
+  .product-image {
+    max-width: 400px;
+    height: 460px;
+  }
+
+  .v-card-title {
+    font-size: 45px !important;
+  }
+
+  .product-price {
+    font-size: 34px;
+  }
+
+  .v-card-text p {
+    font-size: 40px;
+    line-height: 1.6;
+  }
+
+  .addToCartButton {
+    width: 320px;
+    height: 68px;
+    font-size: 33px;
+    margin-right: 0px;
+  }
+
+  .quantity-input {
+    width: 160px;
+    height: 68px;
+    font-size: 40px;
+  }
+
+  .icon {
+    width: 44px;
+    height: 24px;
+  }
+  .quantity-selector {
+    height: 68px;
+    width: 320px;
+  }
 }
 </style>
