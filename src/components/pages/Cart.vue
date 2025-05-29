@@ -6,6 +6,7 @@
       >
 
       <v-card-text>
+        <!-- alert message -->
         <v-alert
           v-if="cartStore.message"
           :style="
@@ -25,18 +26,22 @@
           {{ cartStore.message }}
         </v-alert>
 
+        <!--  show cart items -->
         <template v-if="cartStore.cartItems.length > 0">
           <div
             v-for="(item, index) in cartStore.cartItems"
             :key="item.id"
             class="cart-item"
           >
-            <router-link
-              :to="{ name: 'ProductDetails', params: { id: item.product.id } }"
-              class="d-flex flex-column justify-between h-100 w-100 text-decoration-none"
-            >
-              <v-row class="cart-row" justify="space-between" no-gutters>
-                <v-col cols="12" sm="6" class="d-flex align-center cart-info">
+            <v-row class="cart-row" justify="space-between" no-gutters>
+              <v-col cols="12" sm="6" class="d-flex align-center cart-info">
+                <router-link
+                  :to="{
+                    name: 'ProductDetails',
+                    params: { id: item.product.id },
+                  }"
+                  class="d-flex align-center text-decoration-none"
+                >
                   <v-img
                     :src="item.product.imageURL"
                     class="cart-image"
@@ -53,8 +58,12 @@
                       <span class="font-weight-bold">{{ item.quantity }}</span>
                     </div>
                   </div>
-                </v-col>
-                <v-col cols="12" sm="6" class="cart-controls">
+                </router-link>
+              </v-col>
+
+              <!-- Quantity + Delete Controls (Outside router-link)
+                so when user click on img or product name route him to product details page -->
+              <v-col cols="12" sm="6" class="cart-controls">
                   <div class="quantity-selector">
                     <v-btn
                       icon
@@ -78,8 +87,8 @@
                   </v-btn>
                 </v-col>
               </v-row>
-              <v-divider class="my-4"
-            /></router-link>
+
+            <v-divider class="my-4" />
           </div>
         </template>
 

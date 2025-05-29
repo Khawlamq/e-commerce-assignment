@@ -13,7 +13,7 @@
 
           <!-- Search and filter -->
           <v-row class="mb-4">
-            <v-col cols="4">
+            <v-col cols="12" sm="6"  md="4">
               <v-select
                 :items="priceOptions"
                 v-model="selectedPriceSort"
@@ -23,7 +23,7 @@
                 variant="outlined"
               />
             </v-col>
-            <v-col cols="8">
+            <v-col cols="12" sm="6"  md="8">
               <v-text-field
                 v-model="search"
                 placeholder="ادخل اسم المنتج..."

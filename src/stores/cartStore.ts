@@ -15,7 +15,7 @@ export const useCartStore = defineStore("cart", {
       const userStore = useUserStore();
       const token = userStore.token;
       if (!token) {
-        this.setTimeForMsg((this.message = "تم بتسجيل الدخول اولا"), 7000);
+        this.setTimeForMsg((this.message = "تم بتسجيل الدخول اولا"), 3000);
         return;
       }
 
@@ -34,27 +34,27 @@ export const useCartStore = defineStore("cart", {
       const userStore = useUserStore();
       const token = userStore.token;
       if (!token) {
-        this.setTimeForMsg((this.message = "قم بتسجيل الدخول اولا"), 7000);
+        this.setTimeForMsg((this.message = "قم بتسجيل الدخول اولا"), 3000);
         return;
       }
       try {
-        const response = await axios.post(
+        this.setTimeForMsg(
+          (this.message = "تم اضافة المنتج الى عربة التسوق بنجاح"),
+          3000
+        );
+        await axios.post(
           `https://limitless-lake-55070.herokuapp.com/cart/add?token=${userStore.token}`,
           {
             productId,
             quantity: 1,
           }
         );
-        this.setTimeForMsg(
-          (this.message = "تم اضافة المنتج الى عربة التسوق بنجاح"),
-          7000
-        );
-        this.fetchCartItems(); // to refresh the cart
+        await this.fetchCartItems(); // to refresh the cart
       } catch (error) {
         console.error("Error adding item to cart:", error);
         this.setTimeForMsg(
           (this.message = "هناك مشكلة لم يتم اضافة المنتج الى عربة التسوق"),
-          7000
+          3000
         );
       }
     },
@@ -62,18 +62,18 @@ export const useCartStore = defineStore("cart", {
     async deleteCartItem(cartItemId: number) {
       const userStore = useUserStore();
       try {
-        const response = await axios.delete(
-          `https://limitless-lake-55070.herokuapp.com/cart/delete/${cartItemId}?token=${userStore.token}`
-        );
         this.setTimeForMsg(
           (this.message = "تم حذف المنتج من عربة التسوق بنجاح"),
-          7000
+          3000
         );
-        this.fetchCartItems(); // to refresh the cart
+        await axios.delete(
+          `https://limitless-lake-55070.herokuapp.com/cart/delete/${cartItemId}?token=${userStore.token}`
+        );
+        await this.fetchCartItems(); // to refresh the cart
       } catch (error) {
         this.setTimeForMsg(
           (this.message = "هناك مشكلة لم يتم حذف المنتج من عربة التسوق"),
-          7000
+          3000
         );
       }
     },
@@ -81,16 +81,16 @@ export const useCartStore = defineStore("cart", {
     async updateCartItem(id: number, productId: number, quantity: number) {
       const userStore = useUserStore();
       try {
-        const response = await axios.put(
+        this.setTimeForMsg((this.message = "تم تحديث عربة التسوق بنجاح"), 3000);
+        await axios.put(
           `https://limitless-lake-55070.herokuapp.com/cart/update/${id}?token=${userStore.token}`,
           { id, productId, quantity }
         );
-        this.setTimeForMsg((this.message = "تم تحديث عربة التسوق بنجاح"), 7000);
-        this.fetchCartItems(); // to refresh the cart
+        await this.fetchCartItems(); // to refresh the cart
       } catch (error) {
         this.setTimeForMsg(
           (this.message = " هناك مشكلة لم يتم تحديث عربة التسوق بنجاح"),
-          7000
+          3000
         );
       }
     },
