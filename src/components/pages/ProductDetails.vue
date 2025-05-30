@@ -2,7 +2,7 @@
   <v-container v-if="product">
     <v-card class="product-card content-box">
       <v-alert
-      class="my-3"
+        class="my-3"
         v-if="cartStore.message"
         :style="
           cartStore.message.includes('تم اضافة المنتج الى عربة التسوق بنجاح')
@@ -17,22 +17,35 @@
         {{ cartStore.message }}
       </v-alert>
       <v-row>
-        <v-col cols="12" sm="6" class="d-flex justify-center" >
-          <v-img :src="product.imageURL" class="product-image" />
+        <v-col cols="12" sm="6" class="d-flex justify-center">
+          <v-img
+            :src="product.imageURL"
+            class="product-image"
+            cover
+            height="100%"
+            width="100%"
+          />
         </v-col>
-        <v-col cols="12" sm="6">
-          <v-card-title class="text-wrap">
-            {{ product.name }}
-          </v-card-title>
-          <v-card-subtitle >
-            <div class="font-weight-bold product-price">
-              {{ product.price }} SAR
-            </div>
-          </v-card-subtitle>
-          <v-card-text>
-            <p>{{ product.description }}</p>
-          </v-card-text>
-          <div class="actions-container">
+        <v-col
+          cols="12"
+          sm="6"
+          class="d-flex flex-column justify-space-between"
+        >
+          <div>
+            <v-card-title class="text-wrap">
+              {{ product.name }}
+            </v-card-title>
+            <v-card-subtitle>
+              <div class="font-weight-bold product-price">
+                {{ product.price }} SAR
+              </div>
+            </v-card-subtitle>
+            <v-card-text>
+              <p>{{ product.description }}</p>
+            </v-card-text>
+          </div>
+
+          <div class="actions-container mt-4">
             <div class="quantity-selector">
               <v-btn
                 @click="decrementQuantity()"
@@ -47,10 +60,7 @@
                 min="1"
                 class="quantity-input"
               />
-              <v-btn
-                @click="incrementQuantity()"
-                class="quantity-button"
-              >
+              <v-btn @click="incrementQuantity()" class="quantity-button">
                 <PlusIcon class="icon" />
               </v-btn>
             </div>
@@ -121,7 +131,7 @@ async function decrementQuantity() {
 async function addToCart(product) {
   await cartStore.addCartItem(product.id);
 
-  if (quantity.value >= 1 && product.value ) {
+  if (quantity.value >= 1 && product.value) {
     await cartStore.updateCartItem(
       product.categoryId,
       product.id,
@@ -145,15 +155,14 @@ async function addToCart(product) {
   color: white;
   border-radius: 8px;
   cursor: pointer;
-  margin-right: 10px;
-  width: 120px;
+  margin-top: 10px;
+  width: 170px;
 }
 
-@media (max-width: 700px) {
+@media (min-width: 425px) {
   .addToCartButton {
     width: 170px;
     margin-top: 2px;
-    margin-right: 0px;
   }
 }
 
@@ -164,7 +173,7 @@ async function addToCart(product) {
 .product-image {
   border-radius: 12px;
   width: 100%;
-  height:400px
+  height: 400px;
 }
 
 .product-price {
@@ -185,6 +194,7 @@ async function addToCart(product) {
   border: 1px solid #ccc;
   border-radius: 8px;
   background-color: #f9f9f9;
+  margin-left: 5px;
 }
 .quantity-button {
   background-color: transparent;
@@ -202,36 +212,35 @@ async function addToCart(product) {
   height: 20px;
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 1000px) {
   .product-image {
     max-width: 400px;
     height: 460px;
   }
 
   .v-card-title {
-    font-size: 45px !important;
+    font-size: 35px !important;
   }
 
   .product-price {
-    font-size: 34px;
+    font-size: 28px;
   }
 
   .v-card-text p {
-    font-size: 40px;
+    font-size: 30px;
     line-height: 1.6;
   }
 
   .addToCartButton {
-    width: 320px;
-    height: 68px;
-    font-size: 33px;
-    margin-right: 0px;
+    width: 220px;
+    height: 40px;
+    font-size: 25px;
   }
 
   .quantity-input {
-    width: 160px;
-    height: 68px;
-    font-size: 40px;
+    width: 66px;
+    height: 38px;
+    font-size: 20px;
   }
 
   .icon {
@@ -239,8 +248,8 @@ async function addToCart(product) {
     height: 24px;
   }
   .quantity-selector {
-    height: 68px;
-    width: 320px;
+    height: 38px;
+    width: 220px;
   }
 }
 </style>
