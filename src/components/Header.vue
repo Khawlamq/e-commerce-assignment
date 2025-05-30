@@ -59,6 +59,10 @@ const totalQuantity = computed(() =>
 
 <style scoped>
 .header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: rgb(249, 250, 251);
   padding: 1rem 2rem;
 }
 
@@ -127,20 +131,20 @@ const totalQuantity = computed(() =>
 
 @media (min-width: 1200px) {
   .icon {
-  width: 30px;
-  height: 40px;
-  color: black;
-}
-.icon-button {
-  background-color: #c7f3ec !important;
-  border-radius: 50% !important;
-  width: 60px;
-  height: 60px;
-  border: none !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+    width: 30px;
+    height: 40px;
+    color: black;
+  }
+  .icon-button {
+    background-color: #c7f3ec !important;
+    border-radius: 50% !important;
+    width: 60px;
+    height: 60px;
+    border: none !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 @media (min-width: 700px) {
   .header-content {

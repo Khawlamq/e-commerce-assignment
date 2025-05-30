@@ -183,7 +183,7 @@ async function decrementQuantity(item) {
 }
 
 .cart-item {
-  padding: 8px;
+  padding: 8px 8px 0px 4px;
 }
 
 .cart-item:hover {

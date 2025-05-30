@@ -18,11 +18,9 @@ export const useUserStore = defineStore("user", {
         );
         this.token = response.data.token;
         this.user = response.data.user;
-        console.log("Login successful:", response.data);
         this.setTimeForMsg((this.message = " تسجيل الدخول بنجاح!"), 3000);
       } catch (error) {
         this.setTimeForMsg((this.message = "فشل تسجيل الدخول!"), 3000);
-        console.error("Login error:", error);
       }
     },
     async setTimeForMsg(message: string, duration: number) {
