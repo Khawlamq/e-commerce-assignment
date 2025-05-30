@@ -131,8 +131,8 @@
 
 <script setup lang="ts">
 import { onMounted, ref, computed } from "vue";
-import { useCartStore } from "../../stores/cartStore";
-import { useUserStore } from "../../stores/userStore";
+import { useCartStore } from "../stores/cartStore";
+import { useUserStore } from "../stores/userStore";
 import { MinusIcon, PlusIcon, TrashIcon } from "@heroicons/vue/24/outline";
 
 const cartStore = useCartStore();

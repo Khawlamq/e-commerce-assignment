@@ -3,10 +3,13 @@
     <v-row justify="center">
       <v-col cols="12" md="10">
         <div class="content-box">
+          <!-- Top Ref -->
+          <div ref="topRef"></div>
+
           <v-img
             :src="mainImage"
-            aspect-ratio="16/7"
             class="rounded mb-4"
+            aspect-ratio="2.75"
             cover
             alt="Homepage image"
           />
@@ -34,6 +37,19 @@
             </v-col>
           </v-row>
 
+          <!-- Floating scroll buttons to top/bottom-->
+          <v-btn icon class="scroll-button" @click="scrollTo('top')">
+            <ChevronDoubleUpIcon class="icon" />
+          </v-btn>
+
+          <v-btn
+            icon
+            class="scroll-button scroll-down"
+            @click="scrollTo('bottom')"
+          >
+            <ChevronDoubleDownIcon class="icon" />
+          </v-btn>
+
           <!-- Loading spinner -->
           <div v-if="isLoading" class="text-center py-10">
             <v-progress-circular indeterminate color="green" size="50" />
@@ -55,11 +71,7 @@
                 class="d-flex flex-column justify-between h-100 w-100 text-decoration-none"
               >
                 <v-card class="d-flex flex-column justify-between h-100 w-100">
-                  <v-img
-                    :src="product.imageURL"
-                    height="180px"
-                    cover
-                  />
+                  <v-img :src="product.imageURL" height="180px" cover />
                   <v-card-text
                     class="text-center flex-grow-1 d-flex flex-column justify-space-between"
                   >
@@ -98,19 +110,27 @@
               لا توجد منتجات مطابقة
             </v-col>
           </v-row>
+
+          <!-- Bottom Ref -->
+          <div ref="bottomRef"></div>
         </div>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
+
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from "vue";
-import { useProductStore } from "../../stores/productStore";
-import { useCartStore } from "../../stores/cartStore";
-import mainImage from "../../assets/images/mainImage.png";
-import placeholderImage from "../../assets/images/placeholder.png";
+import { useProductStore } from "..//stores/productStore";
+import { useCartStore } from "..//stores/cartStore";
+import mainImage from "..//assets/images/mainImage.png";
+import placeholderImage from "..//assets/images/placeholder.png";
 import { useRouter } from "vue-router";
+import {
+  ChevronDoubleDownIcon,
+  ChevronDoubleUpIcon,
+} from "@heroicons/vue/24/outline";
 
 const router = useRouter();
 const productStore = useProductStore();
@@ -126,7 +146,13 @@ const page = ref(1);
 const products = ref<any[]>([]);
 const loading = ref(false);
 const isLoading = ref(false);
+const topRef = ref<HTMLElement | null>(null);
+const bottomRef = ref<HTMLElement | null>(null);
 
+function scrollTo(position: 'top' | 'bottom') {
+  const target = position === 'top' ? topRef.value : bottomRef.value;
+  target?.scrollIntoView({ behavior: 'smooth' });
+}
 const sortedProducts = computed(() => {
   const keyword = search.value.toLowerCase().trim();
 
@@ -207,11 +233,26 @@ watch([search, selectedPriceSort], () => {
   padding: 1.5rem;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
 }
-
 .prices {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+.icon {
+  width: 20px;
+  height: 20px;
+  color: rgb(255, 254, 254);
+}
+
+.icon-button {
+  background-color: #c7f3ec !important;
+  border-radius: 50% !important;
+  width: 40px;
+  height: 40px;
+  border: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .addToCartButton {
@@ -219,5 +260,23 @@ watch([search, selectedPriceSort], () => {
   color: white;
   border-radius: 8px;
   cursor: pointer;
+}
+
+.scroll-button {
+  position: fixed;
+  right: 1rem;
+  background-color: #004956;
+}
+
+.scroll-button:hover {
+  opacity: 0.85;
+}
+
+.scroll-button {
+  bottom: 5rem;
+}
+
+.scroll-button.scroll-down {
+  bottom: 1rem;
 }
 </style>

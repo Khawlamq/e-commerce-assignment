@@ -1,9 +1,9 @@
 // src/router/index.ts
 import { createRouter, createWebHistory } from "vue-router";
-import HomePage from "../components/pages/HomePage.vue";
-import Login from "../components/pages/Login.vue";
-import Cart from "../components/pages/Cart.vue";
-import ProductDetails from "../components/pages/ProductDetails.vue";
+import HomePage from "../pages/HomePage.vue";
+import Login from "../pages/Login.vue";
+import Cart from "../pages/Cart.vue";
+import ProductDetails from "../pages/ProductDetails.vue";
 
 const routes = [
   { path: "/", name: "Home", component: HomePage },

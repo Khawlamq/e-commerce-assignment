@@ -89,9 +89,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import { useProductStore } from "../../stores/productStore";
-import { useCartStore } from "../../stores/cartStore";
-import { MinusIcon, PlusIcon } from "@heroicons/vue/24/outline";
+import { useProductStore } from "../stores/productStore";
+import { useCartStore } from "../stores/cartStore";
+import { MinusIcon, PlusIcon} from "@heroicons/vue/24/outline";
 
 const isLoading = ref(true); // for loading products from api call
 const route = useRoute();
