@@ -13,7 +13,7 @@
 
           <!-- Search and filter -->
           <v-row class="mb-4">
-            <v-col cols="12" sm="6"  md="4">
+            <v-col cols="12" sm="6" md="4">
               <v-select
                 :items="priceOptions"
                 v-model="selectedPriceSort"
@@ -23,7 +23,7 @@
                 variant="outlined"
               />
             </v-col>
-            <v-col cols="12" sm="6"  md="8">
+            <v-col cols="12" sm="6" md="8">
               <v-text-field
                 v-model="search"
                 placeholder="ادخل اسم المنتج..."
@@ -55,7 +55,11 @@
                 class="d-flex flex-column justify-between h-100 w-100 text-decoration-none"
               >
                 <v-card class="d-flex flex-column justify-between h-100 w-100">
-                  <v-img :src="product.imageURL" height="180px" cover></v-img>
+                  <v-img
+                    :src="product.imageURL"
+                    height="180px"
+                    cover
+                  />
                   <v-card-text
                     class="text-center flex-grow-1 d-flex flex-column justify-space-between"
                   >
@@ -75,7 +79,7 @@
                         class="addToCartButton"
                         variant="flat"
                         block
-                        @click="addToCart(product.id)"
+                        @click.prevent="addToCart(product.id)"
                       >
                         إضافة للسلة
                       </v-btn>
@@ -87,7 +91,9 @@
           </v-row>
 
           <!-- No products found -->
-           <v-row v-if="!isLoading && products.length === 0  && search.trim().length > 0">
+          <v-row
+            v-if="!isLoading && products.length === 0 && search.trim().length > 0"
+          >
             <v-col cols="12" class="text-center text-grey">
               لا توجد منتجات مطابقة
             </v-col>
@@ -102,7 +108,8 @@
 import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { useProductStore } from "../../stores/productStore";
 import { useCartStore } from "../../stores/cartStore";
-import mainImage from "../../assets/images/main-slider/01.png";
+import mainImage from "../../assets/images/mainImage.png";
+import placeholderImage from "../../assets/images/placeholder.png";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -117,10 +124,9 @@ const priceOptions = [
 const itemsPerPage = 10;
 const page = ref(1);
 const products = ref<any[]>([]);
-const loading = ref(false); // for scroll
-const isLoading = ref(false); // for loading products from api call
+const loading = ref(false);
+const isLoading = ref(false);
 
-// Computed filtered and sorted products
 const sortedProducts = computed(() => {
   const keyword = search.value.toLowerCase().trim();
 
@@ -133,12 +139,12 @@ const sortedProducts = computed(() => {
   } else {
     filtered.sort((a, b) => a.price - b.price);
   }
+
   return filtered;
 });
 
-// Load products for infinite scroll
 function loadMore() {
-  if (loading.value) return; // is empty
+  if (loading.value) return;
   const start = (page.value - 1) * itemsPerPage;
   const nextProducts = sortedProducts.value.slice(start, start + itemsPerPage);
 
@@ -146,22 +152,25 @@ function loadMore() {
   loading.value = true;
 
   setTimeout(() => {
-    products.value.push(...nextProducts);
+    const processedProducts = nextProducts.map((p) => ({
+      ...p,
+      imageURL: p.imageURL?.startsWith("http") ? p.imageURL : placeholderImage,
+    }));
+
+    products.value.push(...processedProducts);
     page.value++;
     loading.value = false;
   }, 200);
 }
 
-// Infinite scroll
 function onScroll() {
   if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
     loadMore();
   }
 }
 
-async function addToCart(productId) {
+async function addToCart(productId: number) {
   await cartStore.addCartItem(productId);
-  router.push('/cart')
 }
 
 onMounted(async () => {
@@ -178,7 +187,6 @@ onUnmounted(() => {
   window.removeEventListener("scroll", onScroll);
 });
 
-// Watch search and sort and reload filtered products
 watch([search, selectedPriceSort], () => {
   page.value = 1;
   products.value = [];
