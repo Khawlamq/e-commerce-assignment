@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import axios from "axios";
 import type { Product } from "../types/product";
 import { useUserStore } from "./userStore";
+import { setTimeForMsg } from "../assets/js/helpers";
 
 export const useWishListStore = defineStore("wishList", {
   state: () => ({
@@ -14,7 +15,7 @@ export const useWishListStore = defineStore("wishList", {
       const userStore = useUserStore();
       const token = userStore.token;
       if (!token) {
-        this.setTimeForMsg((this.message = "تم بتسجيل الدخول اولا"), 3000);
+        setTimeForMsg(this, (this.message = "تم بتسجيل الدخول اولا"), 3000);
         return;
       }
 
@@ -24,7 +25,8 @@ export const useWishListStore = defineStore("wishList", {
         );
         this.wishList = response.data;
       } catch (error) {
-        this.setTimeForMsg(
+        setTimeForMsg(
+          this,
           (this.message = "حدثت مشكلة! الرجاء المحاولة مرة اخرى"),
           3000
         );
@@ -42,12 +44,13 @@ export const useWishListStore = defineStore("wishList", {
       const token = userStore.token;
 
       if (!token) {
-        this.setTimeForMsg((this.message = "يرجى تسجيل الدخول أولا"), 3000);
+        setTimeForMsg(this, (this.message = "يرجى تسجيل الدخول أولا"), 3000);
         return;
       }
 
       try {
-        this.setTimeForMsg(
+        setTimeForMsg(
+          this,
           (this.message = "تم اضافة المنتج الى المفضلة بنجاح"),
           3000
         );
@@ -63,19 +66,12 @@ export const useWishListStore = defineStore("wishList", {
         );
         await this.fetchWishList(); // to refresh wishlist
       } catch (error) {
-        this.setTimeForMsg(
+        setTimeForMsg(
+          this,
           (this.message = "هناك مشكلة! لم يتم اضافة المنتج الى المفضلة "),
           3000
         );
       }
-    },
-
-    async setTimeForMsg(message: string, duration: number) {
-      this.message = message;
-      setTimeout(() => {
-        // remove message alert after duration
-        this.message = "";
-      }, duration);
     },
   },
 });

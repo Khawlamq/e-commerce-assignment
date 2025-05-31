@@ -26,7 +26,7 @@
           {{ userStore.message }}
         </v-alert>
 
-        <v-form @submit.prevent="loginUser">
+        <v-form ref="formRef" @submit.prevent="loginUser">
           <v-text-field
             placeholder="الايميل"
             v-model="username"
@@ -42,6 +42,7 @@
             :type="show2 ? 'text' : 'password'"
             placeholder="كلمة المرور"
             required
+            :rules="[requiredRule]"
             dir="rtl"
             class="text-right"
             :append-inner-icon="undefined"
@@ -69,24 +70,23 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "../stores/userStore";
+import { emailRule, requiredRule } from "../assets/js/helpers";
 import {
   EyeIcon,
   EyeSlashIcon,
   ArrowRightIcon,
 } from "@heroicons/vue/24/outline";
 
+const formRef = ref();
 const userStore = useUserStore();
 const router = useRouter();
-
 const username = ref("");
 const password = ref("");
 const show2 = ref(false);
 
-const emailRule = (v: string) =>
-  (!!v && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) ||
-  "الرجاء إدخال بريد إلكتروني بشكل صحيح!";
-
 async function loginUser() {
+  const { valid } = await formRef.value?.validate();
+  if (!valid) return;
   await userStore.signIn(username.value, password.value);
 
   if (userStore.message.includes("تسجيل الدخول بنجاح")) {
@@ -98,19 +98,6 @@ async function loginUser() {
 </script>
 
 <style scoped>
-.content-box {
-  background-color: #ffffff;
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-  direction: rtl;
-}
-
-.icon {
-  width: 20px;
-  height: 20px;
-  color: black;
-}
 .login-button {
   background-color: rgb(0, 73, 86);
   color: white;

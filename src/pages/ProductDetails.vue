@@ -211,11 +211,6 @@ async function addToCart(product) {
   background-color: transparent;
 }
 
-.icon {
-  width: 20px;
-  height: 20px;
-  color: black;
-}
 
 @media (min-width: 1000px) {
   .product-image {
@@ -251,6 +246,7 @@ async function addToCart(product) {
   .icon {
     width: 44px;
     height: 24px;
+    color: black;
   }
   .quantity-selector {
     height: 38px;

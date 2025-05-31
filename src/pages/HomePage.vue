@@ -1,5 +1,5 @@
 <template>
-  <v-container class="index-page" fluid>
+  <v-container  fluid>
     <v-row justify="center">
       <v-col cols="12" md="10">
         <div class="content-box">
@@ -243,38 +243,10 @@ watch([search, selectedPriceSort], () => {
 </script>
 
 <style scoped>
-.index-page {
-  background-color: rgb(249, 250, 251);
-  min-height: 100vh;
-  padding-top: 2rem;
-}
-
-.content-box {
-  background-color: #ffffff;
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
-}
 .prices {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-.icon {
-  width: 20px;
-  height: 20px;
-  color: black;
-}
-
-.icon-button {
-  background-color: #c7f3ec !important;
-  border-radius: 50% !important;
-  width: 20px;
-  height: 35px;
-  border: none !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .addToCartButton {

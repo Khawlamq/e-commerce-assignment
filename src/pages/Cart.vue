@@ -1,10 +1,10 @@
 <template>
-  <v-container class="cart-page" fluid>
+  <v-container fluid>
     <v-card class="content-box mx-auto">
       <v-card-title class="text-h6 text-right d-flex align-center">
-         <router-link to="/" class="ml-2 d-flex align-center">
-            <ArrowRightIcon class="icon" />
-          </router-link>
+        <router-link to="/" class="ml-2 d-flex align-center">
+          <ArrowRightIcon class="icon" />
+        </router-link>
         سلة المشتريات ({{ totalQuantity }})</v-card-title
       >
 
@@ -107,13 +107,6 @@
             class="text-center font-weight-bold"
           >
             لا توجد منتجات في سلة التسوق
-            <div class="ma-2">
-              <router-link to="/" class="icon-button">
-                <v-btn style="background-color: rgb(0, 73, 86); color: white">
-                  الرجوع الى الصفحة الرئيسية
-                </v-btn>
-              </router-link>
-            </div>
           </v-alert>
         </template>
       </v-card-text>
@@ -141,7 +134,12 @@
 import { onMounted, ref, computed } from "vue";
 import { useCartStore } from "../stores/cartStore";
 import { useUserStore } from "../stores/userStore";
-import { MinusIcon, PlusIcon, TrashIcon, ArrowRightIcon } from "@heroicons/vue/24/outline";
+import {
+  MinusIcon,
+  PlusIcon,
+  TrashIcon,
+  ArrowRightIcon,
+} from "@heroicons/vue/24/outline";
 
 const cartStore = useCartStore();
 const isLoading = ref(true); // for loading products from api call
@@ -173,59 +171,17 @@ async function decrementQuantity(item) {
 </script>
 
 <style scoped>
-.cart-page {
-  background-color: #f9fafb;
-  min-height: 100vh;
-  padding-top: 2rem;
-  direction: rtl;
-  font-family: "Tajawal", sans-serif;
+.checkout-button {
+  background-color: rgb(0, 73, 86);
+  color: white;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 12px 0;
+  transition: background-color 0.3s;
 }
 
-.content-box {
-  background-color: #ffffff;
-  border-radius: 16px;
-  padding: 1.5rem;
-  max-width: 960px;
-  width: 100%;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
-}
-
-.cart-item {
-  padding: 8px 8px 0px 4px;
-}
-
-.cart-item:hover {
-  background-color: #f0f0f0;
-}
-
-.cart-row {
-  flex-wrap: wrap;
-}
-
-.cart-info {
-  gap: 12px;
-}
-
-.cart-image {
-  width: 60px;
-  height: 60px;
-  border-radius: 12px;
-  margin-left: 1rem;
-}
-
-.cart-controls {
-  display: flex;
-  flex-direction: row-reverse;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-top: 8px;
-}
-
-@media (max-width: 700px) {
-  .cart-controls {
-    flex-direction: row;
-    align-items: center;
-  }
+.checkout-button:hover {
+  background-color: rgb(0, 90, 100);
 }
 
 .quantity-selector {
@@ -245,22 +201,4 @@ async function decrementQuantity(item) {
   font-weight: 500;
 }
 
-.checkout-button {
-  background-color: rgb(0, 73, 86);
-  color: white;
-  font-weight: 600;
-  border-radius: 8px;
-  padding: 12px 0;
-  transition: background-color 0.3s;
-}
-
-.checkout-button:hover {
-  background-color: rgb(0, 90, 100);
-}
-
-.icon {
-  width: 20px;
-  height: 20px;
-  color:black
-}
 </style>

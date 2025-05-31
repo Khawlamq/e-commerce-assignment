@@ -1,28 +1,33 @@
-import { defineStore } from 'pinia';
-import axios from 'axios';
-import type { Product } from '../types/product';
+import { defineStore } from "pinia";
+import axios from "axios";
+import type { Product } from "../types/product";
+import { setTimeForMsg } from "../assets/js/helpers";
 
-export const useProductStore = defineStore('product', {
+export const useProductStore = defineStore("product", {
   state: () => ({
     products: [] as Product[],
-    message: ''
+    message: "",
   }),
 
   actions: {
     async fetchProducts() {
       try {
-        const response = await axios.get('https://limitless-lake-55070.herokuapp.com/product/');
+        const response = await axios.get(
+          "https://limitless-lake-55070.herokuapp.com/product/"
+        );
         this.products = response.data;
-        this.setTimeForMsg((this.message="تم اضافة المنتج الى عربة التسوق بنجاح"), 3000)
+        setTimeForMsg(
+          this,
+          (this.message = "تم اضافة المنتج الى عربة التسوق بنجاح"),
+          3000
+        );
       } catch (error) {
-        this.setTimeForMsg((this.message="حدثت مشكلة! الرجاء المحاولة مرة اخرى"), 3000)
+        setTimeForMsg(
+          this,
+          (this.message = "حدثت مشكلة! الرجاء المحاولة مرة اخرى"),
+          3000
+        );
       }
     },
-     async setTimeForMsg(message: string, duration: number){
-        this.message = message;
-        setTimeout(() => { // remove message alert after duration 
-        this.message = '';
-        }, duration);
-    }
   },
 });

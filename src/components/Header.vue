@@ -46,6 +46,7 @@ import { computed, onMounted } from "vue";
 import { useCartStore } from "../stores/cartStore";
 import { useUserStore } from "../stores/userStore";
 import { useWishListStore } from "..//stores/wishListStore";
+import '../assets/main.css';
 
 const wishListStore = useWishListStore();
 const cartStore = useCartStore();
@@ -117,7 +118,7 @@ const cartItemQuantity = computed(() =>
   display: flex;
   gap: 1rem;
 }
-
+/* 
 .icon-button {
   background-color: #c7f3ec !important;
   border-radius: 50% !important;
@@ -133,7 +134,7 @@ const cartItemQuantity = computed(() =>
   width: 20px;
   height: 20px;
   color: black;
-}
+} */
 
 @media (min-width: 1200px) {
   .icon {

@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import type { User } from "../types/user";
+import { setTimeForMsg } from "../assets/js/helpers";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
@@ -18,9 +19,9 @@ export const useUserStore = defineStore("user", {
         );
         this.token = response.data.token;
         this.user = response.data.user;
-        this.setTimeForMsg((this.message = " تسجيل الدخول بنجاح!"), 3000);
+        setTimeForMsg(this, (this.message = " تسجيل الدخول بنجاح!"), 3000);
       } catch (error) {
-        this.setTimeForMsg((this.message = "فشل تسجيل الدخول!"), 3000);
+        setTimeForMsg(this, (this.message = "فشل تسجيل الدخول!"), 3000);
       }
     },
     async signUp(
@@ -29,7 +30,6 @@ export const useUserStore = defineStore("user", {
       lastName: String,
       password: String
     ) {
-    
       console.log("helo");
 
       try {
@@ -37,20 +37,14 @@ export const useUserStore = defineStore("user", {
           `https://limitless-lake-55070.herokuapp.com/user/signup`,
           { email, firstName, lastName, password }
         );
-        this.setTimeForMsg((this.message = "تم إنشاء الحساب بنجاح"), 3000);
+        setTimeForMsg(this, (this.message = "تم إنشاء الحساب بنجاح"), 3000);
       } catch (error) {
-        this.setTimeForMsg(
+        setTimeForMsg(
+          this,
           (this.message = "فشل قي انشاء الحساب حاول مره اخرى !"),
           3000
         );
       }
-    },
-    async setTimeForMsg(message: string, duration: number) {
-      this.message = message;
-      setTimeout(() => {
-        // remove message alert after duration
-        this.message = "";
-      }, duration);
     },
   },
   persist: true,

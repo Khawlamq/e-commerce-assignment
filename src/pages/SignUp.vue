@@ -2,9 +2,9 @@
   <v-container>
     <v-card class="content-box">
       <div>
-         <router-link to="/" class="ml-2 d-flex align-center">
-            <ArrowRightIcon class="icon" />
-          </router-link>
+        <router-link to="/" class="ml-2 d-flex align-center">
+          <ArrowRightIcon class="icon" />
+        </router-link>
       </div>
       <v-card-title class="text-h6 text-right"> إنشاء حساب جديد </v-card-title>
       <v-card-text>
@@ -75,7 +75,12 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "../stores/userStore";
-import { EyeIcon, EyeSlashIcon, ArrowRightIcon } from "@heroicons/vue/24/outline";
+import { emailRule, requiredRule } from "../assets/js/helpers";
+import {
+  EyeIcon,
+  EyeSlashIcon,
+  ArrowRightIcon,
+} from "@heroicons/vue/24/outline";
 
 const userStore = useUserStore();
 const router = useRouter();
@@ -86,11 +91,6 @@ const email = ref("");
 const password = ref("");
 const show2 = ref(false);
 const formRef = ref();
-
-const requiredRule = (v: string) => !!v || "هذا الحقل مطلوب";
-const emailRule = (v: string) =>
-  (!!v && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) ||
-  "الرجاء إدخال بريد إلكتروني بشكل صحيح!";
 
 async function registerUser() {
   const { valid } = await formRef.value?.validate();
@@ -112,23 +112,10 @@ async function registerUser() {
 </script>
 
 <style scoped>
-.content-box {
-  background-color: #ffffff;
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-  direction: rtl;
-}
-
 .login-button {
   background-color: rgb(0, 73, 86);
   color: white;
   border-radius: 8px;
-}
-.icon {
-  width: 20px;
-  height: 20px;
-  color:black
 }
 .login-button:hover {
   background-color: rgba(0, 73, 86, 0.8);

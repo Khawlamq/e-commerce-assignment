@@ -12,7 +12,7 @@
         <v-alert
           v-if="wishListStore.message"
           :style="
-            userStore.message.includes(`تم اضافة المنتج الى المفضلة بنجاح`)
+            wishListStore.message.includes(`تم اضافة المنتج الى المفضلة بنجاح`)
               ? {
                   backgroundColor: 'rgb(186, 243, 230)',
                   fontWeight: 'bold',
@@ -118,55 +118,4 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>
-.content-box {
-  background-color: #ffffff;
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-  direction: rtl;
-}
-
-.cart-item {
-  padding: 8px 8px 0px 4px;
-}
-
-.cart-item:hover {
-  background-color: #f0f0f0;
-}
-
-.cart-row {
-  flex-wrap: wrap;
-}
-
-.cart-info {
-  gap: 12px;
-}
-
-.cart-image {
-  width: 60px;
-  height: 60px;
-  border-radius: 12px;
-  margin-left: 1rem;
-}
-
-.cart-controls {
-  display: flex;
-  flex-direction: row-reverse;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-top: 8px;
-}
-
-@media (max-width: 700px) {
-  .cart-controls {
-    flex-direction: row;
-    align-items: center;
-  }
-}
-
-.icon {
-  width: 20px;
-  height: 20px;
-}
-</style>
+<style scoped></style>
