@@ -66,45 +66,54 @@
               md="3"
               class="d-flex"
             >
-              <router-link
-                :to="{ name: 'ProductDetails', params: { id: product.id } }"
-                class="d-flex flex-column justify-between h-100 w-100 text-decoration-none"
-              >
-                <v-card class="d-flex flex-column justify-between h-100 w-100">
+              <v-card class="d-flex flex-column justify-between h-100 w-100">
+                <div class="icon-button">
+                  <HeartIcon
+                    class="icon"
+                    @click="addToWishList(product)"
+                    v-if="userStore.token"
+                  />
+                </div>
+                <router-link
+                  :to="{ name: 'ProductDetails', params: { id: product.id } }"
+                  class="d-flex flex-column justify-between h-100 w-100 text-decoration-none"
+                >
                   <v-img :src="product.imageURL" height="180px" cover />
-                  <v-card-text
-                    class="text-center flex-grow-1 d-flex flex-column justify-space-between"
-                  >
-                    <div>
-                      <h4 class="text-subtitle-1 font-weight-medium mb-1">
-                        {{ product.name }}
-                      </h4>
-                      <p class="text-body-2">{{ product.description }}</p>
-                    </div>
-                    <div>
-                      <div class="prices my-2">
-                        <div class="text-h6 text-primary font-weight-bold">
-                          {{ product.price }} SAR
-                        </div>
+                </router-link>
+                <v-card-text
+                  class="text-center flex-grow-1 d-flex flex-column justify-space-between"
+                >
+                  <div>
+                    <h4 class="text-subtitle-1 font-weight-medium mb-1">
+                      {{ product.name }}
+                    </h4>
+                    <p class="text-body-2">{{ product.description }}</p>
+                  </div>
+                  <div>
+                    <div class="prices my-2">
+                      <div class="text-h6 text-primary font-weight-bold">
+                        {{ product.price }} SAR
                       </div>
-                      <v-btn
-                        class="addToCartButton"
-                        variant="flat"
-                        block
-                        @click.prevent="addToCart(product.id)"
-                      >
-                        إضافة للسلة
-                      </v-btn>
                     </div>
-                  </v-card-text>
-                </v-card>
-              </router-link>
+                    <v-btn
+                      class="addToCartButton"
+                      variant="flat"
+                      block
+                      @click.prevent="addToCart(product.id)"
+                    >
+                      إضافة للسلة
+                    </v-btn>
+                  </div>
+                </v-card-text>
+              </v-card>
             </v-col>
           </v-row>
 
           <!-- No products found -->
           <v-row
-            v-if="!isLoading && products.length === 0 && search.trim().length > 0"
+            v-if="
+              !isLoading && products.length === 0 && search.trim().length > 0
+            "
           >
             <v-col cols="12" class="text-center text-grey">
               لا توجد منتجات مطابقة
@@ -119,22 +128,26 @@
   </v-container>
 </template>
 
-
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { useProductStore } from "..//stores/productStore";
 import { useCartStore } from "..//stores/cartStore";
+import { useUserStore } from "../stores/userStore";
+import { useWishListStore } from "..//stores/wishListStore";
 import mainImage from "..//assets/images/mainImage.png";
 import placeholderImage from "..//assets/images/placeholder.png";
 import { useRouter } from "vue-router";
 import {
   ChevronDoubleDownIcon,
   ChevronDoubleUpIcon,
+  HeartIcon,
 } from "@heroicons/vue/24/outline";
 
+const userStore = useUserStore();
 const router = useRouter();
 const productStore = useProductStore();
 const cartStore = useCartStore();
+const wishListStore = useWishListStore();
 const search = ref("");
 const selectedPriceSort = ref("lowToHigh");
 const priceOptions = [
@@ -149,9 +162,9 @@ const isLoading = ref(false);
 const topRef = ref<HTMLElement | null>(null);
 const bottomRef = ref<HTMLElement | null>(null);
 
-function scrollTo(position: 'top' | 'bottom') {
-  const target = position === 'top' ? topRef.value : bottomRef.value;
-  target?.scrollIntoView({ behavior: 'smooth' });
+function scrollTo(position: "top" | "bottom") {
+  const target = position === "top" ? topRef.value : bottomRef.value;
+  target?.scrollIntoView({ behavior: "smooth" });
 }
 const sortedProducts = computed(() => {
   const keyword = search.value.toLowerCase().trim();
@@ -199,6 +212,15 @@ async function addToCart(productId: number) {
   await cartStore.addCartItem(productId);
 }
 
+async function addToWishList(product) {
+  await wishListStore.addWishList(
+    product.description,
+    product.id,
+    product.imageURL,
+    product.price
+  );
+}
+
 onMounted(async () => {
   isLoading.value = true;
   await productStore.fetchProducts();
@@ -241,14 +263,14 @@ watch([search, selectedPriceSort], () => {
 .icon {
   width: 20px;
   height: 20px;
-  color: rgb(255, 254, 254);
+  color: black;
 }
 
 .icon-button {
   background-color: #c7f3ec !important;
   border-radius: 50% !important;
-  width: 40px;
-  height: 40px;
+  width: 20px;
+  height: 35px;
   border: none !important;
   display: flex;
   align-items: center;
@@ -264,8 +286,9 @@ watch([search, selectedPriceSort], () => {
 
 .scroll-button {
   position: fixed;
+  z-index: 1000;
   right: 1rem;
-  background-color: #004956;
+  background-color: #c7f3ec;
 }
 
 .scroll-button:hover {

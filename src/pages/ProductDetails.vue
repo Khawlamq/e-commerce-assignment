@@ -16,6 +16,11 @@
       >
         {{ cartStore.message }}
       </v-alert>
+      <div>
+        <router-link to="/" >
+          <ArrowRightIcon class="icon" />
+        </router-link>
+      </div>
       <v-row>
         <v-col cols="12" sm="6" class="d-flex justify-center">
           <v-img
@@ -91,13 +96,12 @@ import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useProductStore } from "../stores/productStore";
 import { useCartStore } from "../stores/cartStore";
-import { MinusIcon, PlusIcon} from "@heroicons/vue/24/outline";
+import { MinusIcon, PlusIcon, ArrowRightIcon } from "@heroicons/vue/24/outline";
 
 const isLoading = ref(true); // for loading products from api call
 const route = useRoute();
 const cartStore = useCartStore();
 const productStore = useProductStore();
-
 const product = ref(null);
 const quantity = ref(1);
 
@@ -210,6 +214,7 @@ async function addToCart(product) {
 .icon {
   width: 20px;
   height: 20px;
+  color: black;
 }
 
 @media (min-width: 1000px) {

@@ -1,7 +1,14 @@
 <template>
   <v-container>
     <v-card class="content-box">
-      <v-card-title class="text-h6 text-right"> تسجيل الدخول </v-card-title>
+      <v-card-title class="text-h6">
+        <div class="d-flex align-center">
+          <router-link to="/" class="ml-2 d-flex align-center">
+            <ArrowRightIcon class="icon" />
+          </router-link>
+          <span class="ml-2">تسجيل الدخول</span>
+        </div>
+      </v-card-title>
       <v-card-text>
         <v-alert
           v-if="userStore.message"
@@ -18,25 +25,40 @@
         >
           {{ userStore.message }}
         </v-alert>
+
         <v-form @submit.prevent="loginUser">
           <v-text-field
-            label=" الايميل"
+            placeholder="الايميل"
             v-model="username"
             required
             dir="rtl"
             class="text-right"
             :rules="[emailRule]"
           />
+
+          <!-- ✅ Password field with eye icon inside on the left -->
           <v-text-field
-            label="كلمة المرور"
             v-model="password"
-            type="password"
+            :type="show2 ? 'text' : 'password'"
+            placeholder="كلمة المرور"
             required
             dir="rtl"
             class="text-right"
-          />
-          <v-btn class="login-button" type="submit"> دخول </v-btn>
-          <v-btn class="forgot-password" text> نسيت كلمة المرور؟ </v-btn>
+            :append-inner-icon="undefined"
+          >
+            <template #append-inner>
+              <component
+                :is="show2 ? EyeSlashIcon : EyeIcon"
+                class="eye-icon"
+                @click="show2 = !show2"
+              />
+            </template>
+          </v-text-field>
+
+          <v-btn class="login-button" type="submit">دخول</v-btn>
+          <!-- <router-link to="/signUp" > -->
+          <v-btn class="logout-button" disabled text>انشاء حساب جديد</v-btn>
+          <!-- </router-link> -->
         </v-form>
       </v-card-text>
     </v-card>
@@ -44,27 +66,33 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "../stores/userStore";
+import {
+  EyeIcon,
+  EyeSlashIcon,
+  ArrowRightIcon,
+} from "@heroicons/vue/24/outline";
 
 const userStore = useUserStore();
 const router = useRouter();
 
 const username = ref("");
 const password = ref("");
+const show2 = ref(false);
 
 const emailRule = (v: string) =>
   (!!v && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) ||
   "الرجاء إدخال بريد إلكتروني بشكل صحيح!";
 
 async function loginUser() {
-  await userStore.login(username.value, password.value);
+  await userStore.signIn(username.value, password.value);
 
   if (userStore.message.includes("تسجيل الدخول بنجاح")) {
     setTimeout(() => {
       router.push("/");
-    }, 2000);  // redirect to home page after show success message
+    }, 2000);
   }
 }
 </script>
@@ -78,6 +106,11 @@ async function loginUser() {
   direction: rtl;
 }
 
+.icon {
+  width: 20px;
+  height: 20px;
+  color: black;
+}
 .login-button {
   background-color: rgb(0, 73, 86);
   color: white;
@@ -88,8 +121,15 @@ async function loginUser() {
   background-color: rgba(0, 73, 86, 0.8);
 }
 
-.forgot-password {
+.logout-button {
   margin-right: 10px;
   color: rgb(0, 73, 86);
+}
+
+.eye-icon {
+  width: 20px;
+  height: 20px;
+  color: #004956;
+  cursor: pointer;
 }
 </style>

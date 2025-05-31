@@ -19,14 +19,17 @@
 
       <!-- Icons -->
       <div class="header-actions">
-        <router-link to="/cart" class="icon-button cart-icon" title="السلة">
+        <router-link to="/cart" class="icon-button" title="السلة">
           <ShoppingBagIcon class="icon" />
-          <span v-if="totalQuantity > 0" class="badge">{{
-            totalQuantity
+          <span v-if="cartItemQuantity > 0" class="badge">{{
+            cartItemQuantity
           }}</span>
         </router-link>
-        <router-link to="/login" class="icon-button" title="تسجيل الدخول">
+        <router-link to="/signIn" class="icon-button" title="تسجيل الدخول">
           <UserIcon class="icon" />
+        </router-link>
+        <router-link to="/wishlist" class="icon-button" title="قائمة المفضلة">
+          <HeartIcon class="icon" />
         </router-link>
       </div>
     </div>
@@ -36,23 +39,26 @@
 <script setup lang="ts">
 import {
   ShoppingBagIcon,
-  UserMinusIcon,
   UserIcon,
+  HeartIcon,
 } from "@heroicons/vue/24/outline";
 import { computed, onMounted } from "vue";
 import { useCartStore } from "../stores/cartStore";
 import { useUserStore } from "../stores/userStore";
+import { useWishListStore } from "..//stores/wishListStore";
 
+const wishListStore = useWishListStore();
 const cartStore = useCartStore();
 const userStore = useUserStore();
 
 onMounted(() => {
   if (userStore.token) {
     cartStore.fetchCartItems();
+    wishListStore.fetchWishList();
   }
 });
 
-const totalQuantity = computed(() =>
+const cartItemQuantity = computed(() =>
   cartStore.cartItems.reduce((total, item) => total + item.quantity, 0)
 );
 </script>

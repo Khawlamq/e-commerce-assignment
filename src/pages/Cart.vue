@@ -1,7 +1,10 @@
 <template>
   <v-container class="cart-page" fluid>
     <v-card class="content-box mx-auto">
-      <v-card-title class="text-h6 text-right">
+      <v-card-title class="text-h6 text-right d-flex align-center">
+         <router-link to="/" class="ml-2 d-flex align-center">
+            <ArrowRightIcon class="icon" />
+          </router-link>
         سلة المشتريات ({{ totalQuantity }})</v-card-title
       >
 
@@ -64,29 +67,29 @@
               <!-- Quantity + Delete Controls (Outside router-link)
                 so when user click on img or product name route him to product details page -->
               <v-col cols="12" sm="6" class="cart-controls">
-                  <div class="quantity-selector">
-                    <v-btn
-                      icon
-                      @click="decrementQuantity(item)"
-                      :disabled="item.quantity <= 1"
-                    >
-                      <MinusIcon class="icon" />
-                    </v-btn>
-                    <span class="quantity-number">{{ item.quantity }}</span>
-                    <v-btn icon @click="incrementQuantity(item)">
-                      <PlusIcon class="icon" />
-                    </v-btn>
-                  </div>
+                <div class="quantity-selector">
                   <v-btn
                     icon
-                    color="error"
-                    variant="outlined"
-                    @click="deleteCartItem(item.id)"
+                    @click="decrementQuantity(item)"
+                    :disabled="item.quantity <= 1"
                   >
-                    <TrashIcon class="icon" />
+                    <MinusIcon class="icon" />
                   </v-btn>
-                </v-col>
-              </v-row>
+                  <span class="quantity-number">{{ item.quantity }}</span>
+                  <v-btn icon @click="incrementQuantity(item)">
+                    <PlusIcon class="icon" />
+                  </v-btn>
+                </div>
+                <v-btn
+                  icon
+                  color="error"
+                  variant="outlined"
+                  @click="deleteCartItem(item.id)"
+                >
+                  <TrashIcon class="icon" />
+                </v-btn>
+              </v-col>
+            </v-row>
 
             <v-divider class="my-4" />
           </div>
@@ -100,12 +103,17 @@
 
           <v-alert
             v-else
-            type="info"
             variant="outlined"
             class="text-center font-weight-bold"
-            style="background-color: #fff3cd; color: #856404"
           >
-            سلة التسوق فارغة حالياً
+            لا توجد منتجات في سلة التسوق
+            <div class="ma-2">
+              <router-link to="/" class="icon-button">
+                <v-btn style="background-color: rgb(0, 73, 86); color: white">
+                  الرجوع الى الصفحة الرئيسية
+                </v-btn>
+              </router-link>
+            </div>
           </v-alert>
         </template>
       </v-card-text>
@@ -133,7 +141,7 @@
 import { onMounted, ref, computed } from "vue";
 import { useCartStore } from "../stores/cartStore";
 import { useUserStore } from "../stores/userStore";
-import { MinusIcon, PlusIcon, TrashIcon } from "@heroicons/vue/24/outline";
+import { MinusIcon, PlusIcon, TrashIcon, ArrowRightIcon } from "@heroicons/vue/24/outline";
 
 const cartStore = useCartStore();
 const isLoading = ref(true); // for loading products from api call
@@ -253,5 +261,6 @@ async function decrementQuantity(item) {
 .icon {
   width: 20px;
   height: 20px;
+  color:black
 }
 </style>
