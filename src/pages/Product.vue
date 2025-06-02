@@ -119,7 +119,7 @@ const cartStore = useCartStore();
 const productStore = useProductStore();
 const product = ref<Product | null>(null);
 const quantity = ref(1);
-let cartId = null;
+let cartId :number | null= null;
 
 onMounted(async () => {
   const id = Number(route.params.id);
