@@ -25,7 +25,7 @@
   width: 100%;
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
   direction: rtl;
-
+  margin: auto;
 }
 
 .cart-item {

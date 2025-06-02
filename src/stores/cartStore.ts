@@ -58,7 +58,6 @@ export const useCartStore = defineStore("cart", {
         );
         await this.fetchCartItems(); // to refresh the cart
       } catch (error) {
-        console.error("Error adding item to cart:", error);
         setTimeForMsg(
           this,
           (this.message = "هناك مشكلة لم يتم اضافة المنتج الى عربة التسوق"),

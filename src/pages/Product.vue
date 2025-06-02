@@ -119,6 +119,7 @@ const cartStore = useCartStore();
 const productStore = useProductStore();
 const product = ref<Product | null>(null);
 const quantity = ref(1);
+let cartId = null;
 
 onMounted(async () => {
   const id = Number(route.params.id);
@@ -134,6 +135,7 @@ onMounted(async () => {
   const existingItem = cartStore.cartItems.find((item) => item.id === id);
   if (existingItem) {
     quantity.value = existingItem.quantity;
+    cartId = existingItem.id;
   }
 
   isLoading.value = false;
@@ -151,11 +153,9 @@ async function addToCart(product: Product) {
   await cartStore.addCartItem(product.id);
 
   if (quantity.value >= 1 && product) {
-    await cartStore.updateCartItem(
-      product.categoryId,
-      product.id,
-      quantity.value
-    );
+    if (cartId !== null) {
+      await cartStore.updateCartItem(cartId, product.id, quantity.value);
+    }
   }
 }
 </script>
