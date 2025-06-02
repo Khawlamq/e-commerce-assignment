@@ -135,6 +135,8 @@ import "../assets/main.css";
 import { onMounted, ref, computed } from "vue";
 import { useCartStore } from "../stores/cartStore";
 import { useUserStore } from "../stores/userStore";
+import type { CartItem } from "../types/cart";
+
 import {
   MinusIcon,
   PlusIcon,
@@ -157,15 +159,15 @@ const totalQuantity = computed(() =>
   cartStore.cartItems.reduce((total, item) => total + item.quantity, 0)
 );
 
-async function deleteCartItem(itemId) {
+async function deleteCartItem(itemId: number) {
   await cartStore.deleteCartItem(itemId);
 }
 
-async function incrementQuantity(item) {
+async function incrementQuantity(item: CartItem) {
   await cartStore.updateCartItem(item.id, item.product.id, item.quantity + 1);
 }
 
-async function decrementQuantity(item) {
+async function decrementQuantity(item: CartItem) {
   const newQuantity = Math.max(item.quantity - 1, 1);
   await cartStore.updateCartItem(item.id, item.product.id, newQuantity);
 }

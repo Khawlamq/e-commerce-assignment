@@ -82,7 +82,7 @@
       </v-row>
     </v-card>
 
-     <v-container v-else-if="!product" class="content-box">
+    <v-container v-else-if="!product" class="content-box">
       <!-- Loading spinner -->
       <div v-if="isLoading" class="text-center py-10">
         <v-progress-circular indeterminate color="green" size="50" />
@@ -102,10 +102,7 @@
         </v-alert>
       </div>
     </v-container>
-
-
-  </v-container 
-  >
+  </v-container>
 </template>
 
 <script setup lang="ts">
@@ -114,12 +111,13 @@ import { useRoute } from "vue-router";
 import { useProductStore } from "../stores/productStore";
 import { useCartStore } from "../stores/cartStore";
 import { MinusIcon, PlusIcon, ArrowRightIcon } from "@heroicons/vue/24/outline";
+import type { Product } from "../types/product";
 
 const isLoading = ref(false);
 const route = useRoute();
 const cartStore = useCartStore();
 const productStore = useProductStore();
-const product = ref(null);
+const product = ref<Product | null>(null);
 const quantity = ref(1);
 
 onMounted(async () => {
@@ -130,7 +128,7 @@ onMounted(async () => {
     await productStore.fetchProducts();
   }
 
-  product.value = productStore.products.find((p) => p.id === id);
+  product.value = productStore.products.find((p) => p.id === id) || null;
 
   // Check if item is already in the cart
   const existingItem = cartStore.cartItems.find((item) => item.id === id);
@@ -149,10 +147,10 @@ async function decrementQuantity() {
   quantity.value--;
 }
 
-async function addToCart(product) {
+async function addToCart(product: Product) {
   await cartStore.addCartItem(product.id);
 
-  if (quantity.value >= 1 && product.value) {
+  if (quantity.value >= 1 && product) {
     await cartStore.updateCartItem(
       product.categoryId,
       product.id,

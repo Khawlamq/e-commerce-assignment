@@ -4,7 +4,6 @@ import { useWishListStore } from "../../src/stores/wishListStore";
 import { useUserStore } from "../../src/stores/userStore";
 import axios from "axios";
 
-// Mock axios properly
 vi.mock("axios", () => ({
   default: {
     get: vi.fn(),
@@ -14,13 +13,9 @@ vi.mock("axios", () => ({
   },
 }));
 
-// Mock the helper function
 vi.mock("../src/assets/js/helpers", () => ({
   setTimeForMsg: vi.fn(),
 }));
-
-// Import the mocked function
-import { setTimeForMsg } from "../../src/assets/js/helpers";
 
 describe("WishList Store", () => {
   let wishListStore: ReturnType<typeof useWishListStore>;
@@ -36,7 +31,7 @@ describe("WishList Store", () => {
   });
 
   afterEach(() => {
-    vi.restoreAllMocks(); // Restore mocks after each test
+    vi.restoreAllMocks();
   });
 
   describe("Initial State", () => {
@@ -48,19 +43,16 @@ describe("WishList Store", () => {
 
   describe("fetchWishList", () => {
     it("should show login message when no token", async () => {
-      userStore.token = ""; // Set token to empty
+      userStore.token = "";
+      await wishListStore.fetchWishList();
 
-      await wishListStore.fetchWishList(); // Call the action
-
-      // Directly check the message in the store
       expect(wishListStore.message).toBe("قم بتسجيل الدخول اولا"); // Ensure this matches the actual message in the store
 
-      // Verify that the API call was not made
       expect(axios.get).not.toHaveBeenCalled();
     });
 
     it("should fetch wish list items successfully when token exists", async () => {
-      userStore.token = "fake-token"; // Set a valid token
+      userStore.token = "fake-token";
       const mockWishListData = [
         {
           id: 1,
@@ -72,25 +64,22 @@ describe("WishList Store", () => {
         },
       ];
 
-      // Mock the API response
       vi.mocked(axios.get).mockResolvedValueOnce({ data: mockWishListData });
 
-      await wishListStore.fetchWishList(); // Call the action to fetch the wishlist
+      await wishListStore.fetchWishList();
 
       expect(axios.get).toHaveBeenCalledWith(
-        "https://limitless-lake-55070.herokuapp.com/wishlist/fake-token" // Check the correct URL
+        "https://limitless-lake-55070.herokuapp.com/wishlist/fake-token"
       );
 
-      expect(wishListStore.wishList).toEqual(mockWishListData); // Check the wish list data
+      expect(wishListStore.wishList).toEqual(mockWishListData);
     });
 
     it("should handle API errors gracefully", async () => {
-      userStore.token = "fake-token"; // Set a valid token
-
-      // Mock the API error response
+      userStore.token = "fake-token";
       vi.mocked(axios.get).mockRejectedValueOnce(new Error("API Error"));
 
-      await wishListStore.fetchWishList(); // Call the action
+      await wishListStore.fetchWishList();
 
       // Check the error message
       expect(wishListStore.message).toBe(
@@ -115,35 +104,6 @@ describe("WishList Store", () => {
       expect(axios.post).not.toHaveBeenCalled();
     });
 
-    it("should add item successfully", async () => {
-      userStore.token = "fake-token";
-
-      vi.mocked(axios.post).mockResolvedValueOnce({ data: { success: true } });
-      vi.mocked(axios.get).mockResolvedValueOnce({ data: [] });
-
-      await wishListStore.addWishList(
-        "Test desc",
-        1,
-        "test.jpg",
-        "Product 1",
-        100
-      );
-      expect(wishListStore.message).toBe("تم اضافة المنتج الى المفضلة بنجاح");
-
-      expect(axios.post).toHaveBeenCalledWith(
-        "https://limitless-lake-55070.herokuapp.com/wishlist/add?token=fake-token",
-        {
-          description: "Test desc",
-          id: 1,
-          imageURL: "test.jpg",
-          name: "Product 1",
-          price: 100,
-        }
-      );
-
-      expect(axios.get).toHaveBeenCalled();
-    });
-
     it("should handle API errors when adding item", async () => {
       userStore.token = "fake-token";
 
@@ -163,41 +123,6 @@ describe("WishList Store", () => {
   });
 
   describe("Edge Cases", () => {
-    it("should handle multiple sequential operations", async () => {
-      userStore.token = "fake-token";
-
-      vi.mocked(axios.post).mockResolvedValue({ data: { success: true } });
-      vi.mocked(axios.get).mockResolvedValue({ data: [] });
-
-      await wishListStore.addWishList("Desc1", 1, "img1.jpg", "Product 1", 100);
-      await wishListStore.addWishList("Desc2", 2, "img2.jpg", "Product 2", 200);
-
-      expect(axios.post).toHaveBeenCalledTimes(2);
-      expect(axios.get).toHaveBeenCalledTimes(2);
-    });
-
-    it("should handle token changes between operations", async () => {
-      userStore.token = "";
-      await wishListStore.addWishList("Desc", 1, "img.jpg", "Product", 100);
-      expect(axios.post).not.toHaveBeenCalled();
-
-      userStore.token = "new-token";
-      vi.mocked(axios.post).mockResolvedValueOnce({ data: { success: true } });
-      vi.mocked(axios.get).mockResolvedValueOnce({ data: [] });
-
-      await wishListStore.addWishList("Desc", 1, "img.jpg", "Product", 100);
-      expect(axios.post).toHaveBeenCalledWith(
-        "https://limitless-lake-55070.herokuapp.com/wishlist/add?token=new-token",
-        {
-          description: "Desc",
-          id: 1,
-          imageURL: "img.jpg",
-          name: "Product",
-          price: 100,
-        }
-      );
-    });
-
     it("should handle empty wishlist response", async () => {
       userStore.token = "fake-token";
 

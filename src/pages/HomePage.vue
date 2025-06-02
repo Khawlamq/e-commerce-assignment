@@ -163,6 +163,7 @@ import { useWishListStore } from "..//stores/wishListStore";
 import mainImage from "..//assets/images/mainImage.png";
 import placeholderImage from "..//assets/images/placeholder.png";
 import { useRouter } from "vue-router";
+import type { Product } from "../types/product";
 import {
   ChevronDoubleDownIcon,
   ChevronDoubleUpIcon,
@@ -245,10 +246,11 @@ async function addToCart(productId: number) {
   await cartStore.addCartItem(productId);
 }
 
-async function addToWishList(product) {
+async function addToWishList(product: Product) {
   await wishListStore.addWishList(
     product.description,
     product.id,
+    product.name,
     product.imageURL,
     product.price
   );

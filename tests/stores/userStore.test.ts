@@ -35,7 +35,7 @@ describe("User Store Tests", () => {
 
     expect(userStore.token).toBe("fake-token");
     expect(userStore.user).toEqual({ id: 1, name: "Test User" });
-    expect(userStore.message).toBe(" تسجيل الدخول بنجاح!");
+    expect(userStore.message).toBe("تسجيل الدخول بنجاح!");
   });
 
   it("handles sign in error", async () => {
@@ -53,7 +53,7 @@ describe("User Store Tests", () => {
 
     await userStore.signUp("test@example.com", "Test", "User", "password123");
 
-    expect(userStore.message).toBe("تم إنشاء الحساب بنجاح");
+    expect(userStore.message).toBe("تم إنشاء الحساب بنجاح .. سجل دخولك حتى تظهر لك قائمتك المفضلة والسلة الخاصة بك");
   });
 
   it("handles sign up error", async () => {

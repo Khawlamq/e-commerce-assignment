@@ -84,7 +84,6 @@ import {
   EyeIcon,
   EyeSlashIcon,
   ArrowRightIcon,
-  useRoute,
 } from "@heroicons/vue/24/outline";
 const formRef = ref();
 const userStore = useUserStore();

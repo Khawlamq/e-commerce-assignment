@@ -1,9 +1,10 @@
-import { createVuetify } from 'vuetify'
-import * as components from 'vuetify/components'
-import * as directives from 'vuetify/directives'
+// tests/vuetifySetup.ts
+import { createVuetify } from 'vuetify';
+import { createApp } from 'vue';
 
-// Global test setup for Vuetify
-global.vuetify = createVuetify({
-  components,
-  directives,
-})
+const vuetify = createVuetify();
+
+const app = createApp({});
+app.use(vuetify);
+
+export { app };

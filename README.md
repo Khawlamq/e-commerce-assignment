@@ -1,33 +1,48 @@
-# e-commerce-assignment
+# E-Commerce Assignment
 
-This template should help get you started developing with Vue 3 in Vite.
+A Vue.js e-commerce application built with Vitest and Vuetify, leveraging TypeScript for type safety.
 
-## Recommended IDE Setup
+## Table of Contents
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- [Technologies Used](#technologies-used)
+- [Installation](#installation)
+- [Development](#development)
+- [Testing](#testing)
+- [Build](#build)
 
-## Type Support for `.vue` Imports in TS
+## Technologies Used
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+- **Vue.js**: ^3.5.13
+- **Vuetify**: ^3.8.6
+- **Vitest**: ^3.1.4
+- **TypeScript**: ~5.8.0
+- **Pinia**: ^3.0.1
+- **Axios**: ^1.9.0
+- **Vite**: ^6.2.4
+- **@heroicons/vue**: ^2.2.0
 
-## Customize configuration
+## Installation
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+To get started with the project, clone the repository and install the dependencies:
 
-## Project Setup
-
-```sh
+```bash
+git clone https://github.com/Khawlamq/e-commerce-assignment.git
+cd e-commerce-assignment
 npm install
-```
 
-### Compile and Hot-Reload for Development
+## Development
 
-```sh
 npm run dev
-```
 
-### Type-Check, Compile and Minify for Production
+## Testing
 
-```sh
+npm run test
+
+## For a test UI, run:
+
+npm run test:uifile
+
+## Build
+
 npm run build
 ```
