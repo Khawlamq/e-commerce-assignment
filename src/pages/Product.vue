@@ -1,6 +1,12 @@
 <template>
-  <v-container v-if="product">
-    <v-card class="product-card content-box">
+  <v-container>
+    <v-card v-if="product" class="content-box">
+      <v-card-title class="text-right d-flex align-center">
+        <router-link to="/" class="ml-2 d-flex align-center">
+          <ArrowRightIcon class="icon" />
+        </router-link>
+        تفاصيل المنتج</v-card-title
+      >
       <v-alert
         class="my-3"
         v-if="cartStore.message"
@@ -16,11 +22,6 @@
       >
         {{ cartStore.message }}
       </v-alert>
-      <div>
-        <router-link to="/" >
-          <ArrowRightIcon class="icon" />
-        </router-link>
-      </div>
       <v-row>
         <v-col cols="12" sm="6" class="d-flex justify-center">
           <v-img
@@ -80,15 +81,31 @@
         </v-col>
       </v-row>
     </v-card>
-  </v-container>
 
-  <v-container v-else>
-    <!-- Loading spinner -->
-    <div v-if="isLoading" class="text-center py-10">
-      <v-progress-circular indeterminate color="green" size="50" />
-      <p class="mt-4">جاري تحميل المنتجات...</p>
-    </div>
-  </v-container>
+     <v-container v-else-if="!product" class="content-box">
+      <!-- Loading spinner -->
+      <div v-if="isLoading" class="text-center py-10">
+        <v-progress-circular indeterminate color="green" size="50" />
+        <p class="mt-4">جاري تحميل المنتجات...</p>
+      </div>
+      <!-- if no products -->
+
+      <div v-else-if="!product">
+        <v-card-title class="text-right d-flex align-center">
+          <router-link to="/" class="ml-2 d-flex align-center">
+            <ArrowRightIcon class="icon" />
+          </router-link>
+          العودة للقائمة الرئيسية</v-card-title
+        >
+        <v-alert variant="outlined" class="text-center font-weight-bold mt-4">
+          المنتج غير موجود
+        </v-alert>
+      </div>
+    </v-container>
+
+
+  </v-container 
+  >
 </template>
 
 <script setup lang="ts">
@@ -98,7 +115,7 @@ import { useProductStore } from "../stores/productStore";
 import { useCartStore } from "../stores/cartStore";
 import { MinusIcon, PlusIcon, ArrowRightIcon } from "@heroicons/vue/24/outline";
 
-const isLoading = ref(true); // for loading products from api call
+const isLoading = ref(false);
 const route = useRoute();
 const cartStore = useCartStore();
 const productStore = useProductStore();
@@ -210,7 +227,6 @@ async function addToCart(product) {
   border: none;
   background-color: transparent;
 }
-
 
 @media (min-width: 1000px) {
   .product-image {

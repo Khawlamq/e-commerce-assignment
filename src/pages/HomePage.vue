@@ -1,5 +1,5 @@
 <template>
-  <v-container  fluid>
+  <v-container fluid>
     <v-row justify="center">
       <v-col cols="12" md="10">
         <div class="content-box">
@@ -18,6 +18,7 @@
           <v-row class="mb-4">
             <v-col cols="12" sm="6" md="4">
               <v-select
+                data-testid="price-select"
                 :items="priceOptions"
                 v-model="selectedPriceSort"
                 label="فرز حسب السعر"
@@ -28,6 +29,7 @@
             </v-col>
             <v-col cols="12" sm="6" md="8">
               <v-text-field
+                data-testid="search-input"
                 v-model="search"
                 placeholder="ادخل اسم المنتج..."
                 variant="outlined"
@@ -38,12 +40,18 @@
           </v-row>
 
           <!-- Floating scroll buttons to top/bottom-->
-          <v-btn icon class="scroll-button" @click="scrollTo('top')">
+          <v-btn
+            data-testid="scroll-up"
+            icon
+            class="scroll-button"
+            @click="scrollTo('top')"
+          >
             <ChevronDoubleUpIcon class="icon" />
           </v-btn>
 
           <v-btn
             icon
+            data-testid="scroll-down"
             class="scroll-button scroll-down"
             @click="scrollTo('bottom')"
           >
@@ -51,11 +59,26 @@
           </v-btn>
 
           <!-- Loading spinner -->
-          <div v-if="isLoading" class="text-center py-10">
+          <div v-if="isLoading == true" class="text-center py-10">
             <v-progress-circular indeterminate color="green" size="50" />
             <p class="mt-4">جاري تحميل المنتجات...</p>
           </div>
-
+          <!-- when no products -->
+          <v-alert
+            v-else-if="productStore.products.length == 0"
+            variant="outlined"
+            class="text-center font-weight-bold mt-4"
+          >
+            لا توجد منتجات
+          </v-alert>
+          <v-alert
+            v-if="showLoginAlert"
+            variant="outlined"
+            type="info"
+            class="text-center font-weight-bold my-4"
+          >
+            قم بتسجيل الدخول اولا حتى تتمكن من التسوق
+          </v-alert>
           <!-- Products -->
           <v-row>
             <v-col
@@ -67,15 +90,15 @@
               class="d-flex"
             >
               <v-card class="d-flex flex-column justify-between h-100 w-100">
-                <div class="icon-button">
+                <div class="icon-button" v-if="userStore.token">
                   <HeartIcon
+                    data-testid="wishlist-button"
                     class="icon"
                     @click="addToWishList(product)"
-                    v-if="userStore.token"
                   />
                 </div>
                 <router-link
-                  :to="{ name: 'ProductDetails', params: { id: product.id } }"
+                  :to="{ name: 'Product', params: { id: product.id } }"
                   class="d-flex flex-column justify-between h-100 w-100 text-decoration-none"
                 >
                   <v-img :src="product.imageURL" height="180px" cover />
@@ -112,7 +135,9 @@
           <!-- No products found -->
           <v-row
             v-if="
-              !isLoading && products.length === 0 && search.trim().length > 0
+              isLoading == false &&
+              products.length === 0 &&
+              search.trim().length > 0
             "
           >
             <v-col cols="12" class="text-center text-grey">
@@ -129,6 +154,7 @@
 </template>
 
 <script setup lang="ts">
+import "../assets/main.css";
 import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { useProductStore } from "..//stores/productStore";
 import { useCartStore } from "..//stores/cartStore";
@@ -142,7 +168,7 @@ import {
   ChevronDoubleUpIcon,
   HeartIcon,
 } from "@heroicons/vue/24/outline";
-
+const showLoginAlert = ref(false);
 const userStore = useUserStore();
 const router = useRouter();
 const productStore = useProductStore();
@@ -158,7 +184,7 @@ const itemsPerPage = 10;
 const page = ref(1);
 const products = ref<any[]>([]);
 const loading = ref(false);
-const isLoading = ref(false);
+const isLoading = computed(() => productStore.isLoading);
 const topRef = ref<HTMLElement | null>(null);
 const bottomRef = ref<HTMLElement | null>(null);
 
@@ -209,6 +235,13 @@ function onScroll() {
 }
 
 async function addToCart(productId: number) {
+  if (!userStore.token) {
+    showLoginAlert.value = true;
+    setTimeout(() => {
+      showLoginAlert.value = false;
+    }, 3000);
+    return;
+  }
   await cartStore.addCartItem(productId);
 }
 
@@ -222,13 +255,11 @@ async function addToWishList(product) {
 }
 
 onMounted(async () => {
-  isLoading.value = true;
   await productStore.fetchProducts();
   products.value = [];
   page.value = 1;
   loadMore();
   window.addEventListener("scroll", onScroll);
-  isLoading.value = false;
 });
 
 onUnmounted(() => {

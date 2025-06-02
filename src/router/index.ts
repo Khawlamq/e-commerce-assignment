@@ -5,7 +5,7 @@ import SignIn from "../pages/SignIn.vue";
 import SignUp from "../pages/SignUp.vue";
 import Cart from "../pages/Cart.vue";
 import WishList from "../pages/WishList.vue";
-import ProductDetails from "../pages/ProductDetails.vue";
+import Product from "../pages/Product.vue";
 
 const routes = [
   { path: "/", name: "Home", component: HomePage },
@@ -15,8 +15,8 @@ const routes = [
   { path: "/wishList", name: "WishList", component: WishList },
   {
     path: "/products/:id",
-    name: "ProductDetails",
-    component: ProductDetails,
+    name: "Product",
+    component: Product,
     props: true,
   },
 ];

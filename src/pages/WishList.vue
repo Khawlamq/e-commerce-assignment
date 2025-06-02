@@ -1,11 +1,11 @@
 <template>
   <v-container fluid>
-    <v-card class="content-box">
+    <v-card class="content-box" v-if="userStore.token">
       <v-card-title class="text-h6 d-flex align-center">
         <router-link to="/" class="ml-2 d-flex align-center">
           <ArrowRightIcon class="icon" />
         </router-link>
-        المنتجات المفضلة ({{ wishListQuantity }})</v-card-title
+        المنتجات المفضلة</v-card-title
       >
       <v-card-text>
         <!-- alert message -->
@@ -39,7 +39,7 @@
               <v-col cols="12" sm="6" class="d-flex align-center cart-info">
                 <router-link
                   :to="{
-                    name: 'ProductDetails',
+                    name: 'Product',
                     params: { id: item.id },
                   }"
                   class="d-flex align-center text-decoration-none"
@@ -79,22 +79,18 @@
           </div>
 
           <v-alert
-            v-else
+            v-else-if="wishListStore.wishList.length == 0"
             variant="outlined"
             class="text-center font-weight-bold"
           >
             لا توجد منتجات مفضلة
-            <div class="ma-2">
-              <router-link to="/" class="icon-button">
-                <v-btn style="background-color: rgb(0, 73, 86); color: white">
-                  الرجوع الى الصفحة الرئيسية
-                </v-btn>
-              </router-link>
-            </div>
           </v-alert>
         </template>
       </v-card-text>
     </v-card>
+    <v-alert v-else class="text-center">
+      قم بتسجيل الدخول لعرض المفضلات
+    </v-alert>
   </v-container>
 </template>
 
@@ -105,8 +101,9 @@ import { useUserStore } from "../stores/userStore";
 import { HeartIcon, ArrowRightIcon } from "@heroicons/vue/24/solid";
 
 const wishListStore = useWishListStore();
-const isLoading = ref(true); // for loading products from api call
-const wishListQuantity = wishListStore.wishList.length;
+const isLoading = ref(false); // for loading products from api call
+const wishListQuantity = computed(() => wishListStore.wishList.length);
+const userStore = useUserStore();
 
 onMounted(async () => {
   const userStore = useUserStore();

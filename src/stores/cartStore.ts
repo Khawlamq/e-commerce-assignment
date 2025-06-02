@@ -16,7 +16,7 @@ export const useCartStore = defineStore("cart", {
       const userStore = useUserStore();
       const token = userStore.token;
       if (!token) {
-        setTimeForMsg(this, (this.message = "تم بتسجيل الدخول اولا"), 3000);
+        setTimeForMsg(this, (this.message = " قم بتسجيل الدخول اولا"), 3000);
         return;
       }
 
@@ -27,6 +27,11 @@ export const useCartStore = defineStore("cart", {
         this.cartItems = response.data.cartItems;
         this.totalCost = response.data.totalCost;
       } catch (error) {
+        setTimeForMsg(
+          this,
+          (this.message = "حدثت مشكلة! الرجاء المحاولة مرة اخرى"),
+          3000
+        );
         console.error("Error fetching cart items:", error);
       }
     },
@@ -99,7 +104,7 @@ export const useCartStore = defineStore("cart", {
       } catch (error) {
         setTimeForMsg(
           this,
-          (this.message = " هناك مشكلة لم يتم تحديث عربة التسوق بنجاح"),
+          (this.message = "هناك مشكلة لم يتم تحديث عربة التسوق بنجاح"),
           3000
         );
       }

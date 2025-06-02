@@ -40,7 +40,7 @@
               <v-col cols="12" sm="6" class="d-flex align-center cart-info">
                 <router-link
                   :to="{
-                    name: 'ProductDetails',
+                    name: 'Product',
                     params: { id: item.product.id },
                   }"
                   class="d-flex align-center text-decoration-none"
@@ -102,7 +102,7 @@
           </div>
 
           <v-alert
-            v-else
+            v-else-if="cartStore.cartItems.length == 0"
             variant="outlined"
             class="text-center font-weight-bold"
           >
@@ -131,6 +131,7 @@
 </template>
 
 <script setup lang="ts">
+import "../assets/main.css";
 import { onMounted, ref, computed } from "vue";
 import { useCartStore } from "../stores/cartStore";
 import { useUserStore } from "../stores/userStore";
@@ -142,7 +143,7 @@ import {
 } from "@heroicons/vue/24/outline";
 
 const cartStore = useCartStore();
-const isLoading = ref(true); // for loading products from api call
+const isLoading = ref(false);
 
 onMounted(async () => {
   const userStore = useUserStore();
@@ -200,5 +201,4 @@ async function decrementQuantity(item) {
   text-align: center;
   font-weight: 500;
 }
-
 </style>

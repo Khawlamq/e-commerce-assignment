@@ -26,18 +26,26 @@
           {{ userStore.message }}
         </v-alert>
 
-        <v-form ref="formRef" @submit.prevent="loginUser">
+        <div v-if="userStore.token">
+          <v-alert variant="outlined" class="text-center font-weight-bold mt-4">
+            لقد سجلت الدخول مسبقاً
+          </v-alert>
+        </div>
+
+        <v-form v-else ref="formRef" @submit.prevent="loginUser">
           <v-text-field
+            data-testid="email-input"
             placeholder="الايميل"
             v-model="username"
             required
             dir="rtl"
             class="text-right"
             :rules="[emailRule]"
+            autocomplete="email"
           />
 
-          <!-- ✅ Password field with eye icon inside on the left -->
           <v-text-field
+            data-testid="password-input"
             v-model="password"
             :type="show2 ? 'text' : 'password'"
             placeholder="كلمة المرور"
@@ -46,6 +54,7 @@
             dir="rtl"
             class="text-right"
             :append-inner-icon="undefined"
+            autocomplete="current-password"
           >
             <template #append-inner>
               <component
@@ -57,9 +66,9 @@
           </v-text-field>
 
           <v-btn class="login-button" type="submit">دخول</v-btn>
-          <!-- <router-link to="/signUp" > -->
-          <v-btn class="logout-button" disabled text>انشاء حساب جديد</v-btn>
-          <!-- </router-link> -->
+          <router-link to="/signUp">
+            <v-btn class="signup-button" text>انشاء حساب جديد</v-btn>
+          </router-link>
         </v-form>
       </v-card-text>
     </v-card>
@@ -75,8 +84,8 @@ import {
   EyeIcon,
   EyeSlashIcon,
   ArrowRightIcon,
+  useRoute,
 } from "@heroicons/vue/24/outline";
-
 const formRef = ref();
 const userStore = useUserStore();
 const router = useRouter();
@@ -86,15 +95,18 @@ const show2 = ref(false);
 
 async function loginUser() {
   const { valid } = await formRef.value?.validate();
-  if (!valid) return;
+  if (!valid) {
+    return;
+  }
   await userStore.signIn(username.value, password.value);
 
   if (userStore.message.includes("تسجيل الدخول بنجاح")) {
     setTimeout(() => {
-      router.push("/");
-    }, 2000);
+      router.push("/"), 4000;
+    });
   }
 }
+defineExpose({ formRef });
 </script>
 
 <style scoped>
@@ -108,7 +120,7 @@ async function loginUser() {
   background-color: rgba(0, 73, 86, 0.8);
 }
 
-.logout-button {
+.signup-button {
   margin-right: 10px;
   color: rgb(0, 73, 86);
 }

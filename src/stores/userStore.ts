@@ -19,25 +19,26 @@ export const useUserStore = defineStore("user", {
         );
         this.token = response.data.token;
         this.user = response.data.user;
-        setTimeForMsg(this, (this.message = " تسجيل الدخول بنجاح!"), 3000);
+        setTimeForMsg(this, (this.message = "تسجيل الدخول بنجاح!"), 3000);
       } catch (error) {
         setTimeForMsg(this, (this.message = "فشل تسجيل الدخول!"), 3000);
       }
     },
+
     async signUp(
       email: String,
       firstName: String,
       lastName: String,
       password: String
     ) {
-      console.log("helo");
+      this.message = "";
 
       try {
-        const response = await axios.post(
+        await axios.post(
           `https://limitless-lake-55070.herokuapp.com/user/signup`,
           { email, firstName, lastName, password }
         );
-        setTimeForMsg(this, (this.message = "تم إنشاء الحساب بنجاح"), 3000);
+        setTimeForMsg(this, (this.message = "تم إنشاء الحساب بنجاح .. سجل دخولك حتى تظهر لك قائمتك المفضلة والسلة الخاصة بك"), 6000);
       } catch (error) {
         setTimeForMsg(
           this,

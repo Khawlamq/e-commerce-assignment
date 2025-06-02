@@ -28,7 +28,12 @@
         <router-link to="/signIn" class="icon-button" title="تسجيل الدخول">
           <UserIcon class="icon" />
         </router-link>
-        <router-link to="/wishlist" class="icon-button" title="قائمة المفضلة">
+        <router-link
+          to="/wishlist"
+          v-if="userStore.token"
+          class="icon-button"
+          title="قائمة المفضلة"
+        >
           <HeartIcon class="icon" />
         </router-link>
       </div>
@@ -46,7 +51,7 @@ import { computed, onMounted } from "vue";
 import { useCartStore } from "../stores/cartStore";
 import { useUserStore } from "../stores/userStore";
 import { useWishListStore } from "..//stores/wishListStore";
-import '../assets/main.css';
+import "../assets/main.css";
 
 const wishListStore = useWishListStore();
 const cartStore = useCartStore();

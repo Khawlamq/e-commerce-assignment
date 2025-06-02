@@ -14,8 +14,10 @@ export const useWishListStore = defineStore("wishList", {
     async fetchWishList() {
       const userStore = useUserStore();
       const token = userStore.token;
+      this.message = "";
+
       if (!token) {
-        setTimeForMsg(this, (this.message = "تم بتسجيل الدخول اولا"), 3000);
+        setTimeForMsg(this, (this.message = "قم بتسجيل الدخول اولا"), 3000);
         return;
       }
 
@@ -24,6 +26,9 @@ export const useWishListStore = defineStore("wishList", {
           `https://limitless-lake-55070.herokuapp.com/wishlist/${token}`
         );
         this.wishList = response.data;
+        if (!this.wishList) {
+          setTimeForMsg(this, (this.message = "لا توجد منتجات مفضلة"), 3000);
+        }
       } catch (error) {
         setTimeForMsg(
           this,
@@ -44,17 +49,13 @@ export const useWishListStore = defineStore("wishList", {
       const token = userStore.token;
 
       if (!token) {
-        setTimeForMsg(this, (this.message = "يرجى تسجيل الدخول أولا"), 3000);
+        setTimeForMsg(this, (this.message = "قم بتسجيل الدخول اولا"), 3000);
         return;
       }
 
+      this.message = "";
       try {
-        setTimeForMsg(
-          this,
-          (this.message = "تم اضافة المنتج الى المفضلة بنجاح"),
-          3000
-        );
-        await axios.post(
+        const response = await axios.post(
           `https://limitless-lake-55070.herokuapp.com/wishlist/add?token=${token}`,
           {
             description,
@@ -64,6 +65,10 @@ export const useWishListStore = defineStore("wishList", {
             price,
           }
         );
+        if (response.data.success) {
+          this.message = "تم اضافة المنتج الى المفضلة بنجاح";
+          setTimeForMsg(this, this.message, 3000);
+        }
         await this.fetchWishList(); // to refresh wishlist
       } catch (error) {
         setTimeForMsg(

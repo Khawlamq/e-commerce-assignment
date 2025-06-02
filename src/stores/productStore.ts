@@ -7,11 +7,13 @@ export const useProductStore = defineStore("product", {
   state: () => ({
     products: [] as Product[],
     message: "",
+    isLoading: false,
   }),
 
   actions: {
     async fetchProducts() {
       try {
+        this.isLoading = true;
         const response = await axios.get(
           "https://limitless-lake-55070.herokuapp.com/product/"
         );
@@ -27,6 +29,8 @@ export const useProductStore = defineStore("product", {
           (this.message = "حدثت مشكلة! الرجاء المحاولة مرة اخرى"),
           3000
         );
+      } finally {
+        this.isLoading = false;
       }
     },
   },
