@@ -1,6 +1,7 @@
 # E-Commerce Assignment
 
-A Vue.js e-commerce application built with Vitest and Vuetify, leveraging TypeScript for type safety.
+An e-commerce store with basic functionality: browsing & filtering products, user login, wish list managment(add, browse),and cart management (add, update, delete).
+Built using Vue 3, Vuetify, and TypeScript, with testing powered by Vitest.
 
 ## Table of Contents
 
